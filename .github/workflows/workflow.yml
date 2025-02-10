@@ -23,7 +23,7 @@ jobs:
           sudo dpkg -i quarto-1.6.40-linux-amd64.deb
 
       - name: Render Quarto document to PDF
-        run: quarto render iv_in:python.md --to pdf
+        run: quarto render iv_in_python.md --to pdf
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
