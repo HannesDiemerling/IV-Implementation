@@ -1,0 +1,29 @@
+name: Build PDF from Markdown
+
+on:
+  push:
+    branches: [ main ]  # oder den Branch, den ihr verwendet
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Repository auschecken
+      - uses: actions/checkout@v3
+
+      # Installiere Pandoc und LaTeX
+      - name: Install pandoc and TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-latex-base texlive-latex-extra
+
+      # Konvertiere deine Markdown-Datei in eine PDF
+      - name: Convert Markdown to PDF
+        run: pandoc README.md -o output.pdf
+
+      # (Optional) Lade die PDF als Artefakt hoch
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pdf
+          path: output.pdf
