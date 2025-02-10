@@ -7,11 +7,12 @@ author:
       - name: "Thomas Bayes Institute, Berlin"
   - name: "Hannes Diemerling"
     affiliations:
-      - name: "Thomas Bayes Institute, Berlin, and Max Planck Institute for Human Development, Berlin"
+      - name: "Thomas Bayes Institute, Berlin"
   - name: "Timo von Oertzen"
     email: "timovoe@gmx.de"
     affiliations:
-      - name: "Thomas Bayes Institute, Berlin, and Max Planck Institute for Human Development, Berlin"
+      - name: "Thomas Bayes Institute, Berlin"
+
 abstract: "To statistically test whether two groups are different or whether two models differ, the accuracy of classifiers can be estimated and compared statistically. However, the distribution of common accuracy estimates like cross validation (CV) is unknown and depends on the classifier used, which makes it inapplicable for statistical inference. Independent validation (IV) has been suggested as an alternative, as the distribution of the IV estimate is always a binomial distribution, allowing both for conventional tests on the accuracy and the Bayesian analysis of classifier performance. Although Python is the most frequently used tool for machine learning methods, so far an implementation of IV in Python is missing. This article introduces a new Python package that implements IV. In addition to the core IV algorithm, the package includes the option to (1) plot the accuracy in dependence of the training set size, (2) to estimate the asymptotical classifier accuracy including its posterior distribution, and (3) to query the posterior distribution for confidence intervals. The package also allows to compare different accuracy posterior distributions of each class of the dataset, different classifiers on the same dataset, or of a single classifier on different datasets. An introduction is provided how to use the package for some examples, and a short simulation that shows how the package works in practice. Using this new Python package will allow empirical scientists to easily use IV in their research, for example to analyze group differences or compare group differences between different data sets. "
 bibliography: bibliography.bib
 keywords: [APA Paper, Machine Learning, Classification, Validation, Independent Validation, Cross Validation, Accuracy, Python, Implementation]
