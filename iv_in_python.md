@@ -72,21 +72,21 @@ This section outlines the Independent Validation process and its implementation.
 
 ## IV Process Description
 
-The IV process comprises the following core steps:
+The IV process can be divided into the following steps:
 
 1. **Initialization:**  
-    A small subset of the available data (e.g., the first few samples) is used to train a copy of the classifier. This initial training set must be smaller than the complete dataset.
+    A portion of the available data (the amount is user-definable) is used to train a classifier instance. This initial training set must be smaller than the complete dataset.
 
-2. **Incremental Prediction & Recording:**  
-    - The remaining samples are processed in batches.  
+2. **Prediction & Recording:**  
+    - The remaining dataset is split up in batches, smallest batch size must be one.  
     - For each batch, the classifier makes predictions on the unseen samples.
     - For every sample in the batch, the outcome (1 for a correct prediction or 0 for an incorrect one) is recorded along with the current training set size.
 
-3. **Training Set Expansion:**  
-    After recording the prediction outcomes, the new samples are added to the training set, and the classifier is retrained. This iterative process continues until all samples have been processed.
+3. **IV Iteration:**  
+    Step 2 is repeated until all samples are processed.
 
 4. **Posterior Distribution Computation:**
-    Based on the recorded IV outcomes, the probability to classify a new sample correctly for a given training set size \( n \) is modeled as:
+    The probability to classify a new sample correctly for a given training set size \( n \) is modeled as:
     
     $$
     p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
@@ -96,21 +96,21 @@ The IV process comprises the following core steps:
     Using the Metropolis-Hastings algorithm (an MCMC sampler), we compute the posterior distribution for these model parameters. This posterior is computed separately for each class (label) in the dataset, enabling both class-specific accuracy assessments and aggregated metrics.
 
 5. **Outputs:**
-    The IV process produces several types of outputs, each reflecting a different aspect of classifiers performance:
-    - **Asymptotic Accuracy Distribution:**  
-      For each label, IV provides a posterior distribution of the *asymptote* parameter. This distribution represents the classifier’s expected accuracy when trained on an infinitely large dataset.
+    The IV process produces several types of outputs:
+    - **Accuracy Distribution for an Infinite Training Set**  
+      For an infinitely large dataset, the classifier’s expected accuracy is represented by the posterior distribution of the *asymptote* parameter, which is provided for each label by IV.
     - **Finite Training Set Accuracy Distribution:**  
-      In addition to the asymptotic case, IV can compute the accuracy distribution for any specific training set size (n). For each MCMC sample, the accuracy at size n is calculated using  
+    For a finite training set of size 𝑛, IV can compute the corresponding accuracy distribution. For each MCMC sample, the accuracy at size 𝑛 is determined using:
       $$
       p_n = \text{asymptote} - \frac{\text{offset\_factor}}{n},
       $$  
-      and the collection of these values forms a distribution for the accuracy at that particular n.
+      All MCMC values together form a distribution for the accuracy at this particular n.
     - **Overall Accuracy Distributions:**  
-      Instead of assessing a single label, IV also allows evaluation of the classifier’s performance over the full dataset. Two metrics are available:
+      Instead of assessing accuracy Distributions for a single label, IV also allows evaluation of the classifier’s performance over the full dataset. Two metrics are available:
       - **Balanced Accuracy (bacc):**  
-        This is obtained by convolving the per-label accuracy distributions with equal weights, ensuring that all labels contribute equally.
+        Using the IV, it is also possible to get a distribution for the balanced accuracy by convolving the distributions of accuracy per label with equal weights. 
       - **Standard Accuracy (acc):**  
-        This metric is computed by convolving the per-label distributions with weights proportional to the frequency of each label in the dataset.
+        The accuracy is computed by convolving the per-label distributions with weights proportional to the frequency of each label in the dataset.
     - **Development over Trainingset size:**
       Another alternative is to observe the development of the accuracy while the trainingset increases and therefore the classifier improves. To do so, one of the prior functions is run multiple times with n values from 1 to 100. TODO: Elaborate
 
