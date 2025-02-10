@@ -1,0 +1,33 @@
+name: Render PDF
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Repository auschecken
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Quarto installieren (hier wird der offizielle Quarto Action genutzt)
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-action@v2
+
+      # Quarto-Dokument in PDF rendern
+      - name: Render Quarto to PDF
+        run: quarto render document.qmd --to pdf
+
+      # (Optional) Das generierte PDF als Artefakt hochladen,
+      # damit es über die GitHub Actions Oberfläche heruntergeladen werden kann
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: rendered-pdf
+          path: document.pdf
