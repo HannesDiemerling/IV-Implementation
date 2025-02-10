@@ -67,47 +67,51 @@ Independent Validation exhibited a tendency to be biased in cases of small datas
 
 An implementation of independent validation in Python follows.
 
-# Methods – Independent Validation (IV)
-
-This section details the Independent Validation (IV) process implemented in our Python package, its demonstration through example scripts and visualization, the testing procedures ensuring its correctness, and a fictional example application.
-
----
+# Methods
 
 ## IV Process Description
 
-TODO: This part can be shortened, introduction again ain't necessary.
-
-The Independent Validation (IV) process is an incremental evaluation method to assess the evolving performance of a classifier. Unlike standard approaches such as cross‐validation, IV ensures statistical independence between predictions and training data by predicting each new sample *before* adding it to the training set. This independence guarantees that the resulting accuracy estimates follow a binomial distribution, thereby enabling standard statistical tests and Bayesian inference.
-
 The IV process comprises the following core steps:
 
-TODO: Explanation can be improved, though is fine (and universal).
-
 1. **Initialization:**  
-   A small subset of the available data (e.g., the first few samples) is used to train a copy of the classifier. This initial training set must be smaller than the complete dataset.
+    A small subset of the available data (e.g., the first few samples) is used to train a copy of the classifier. This initial training set must be smaller than the complete dataset.
 
 2. **Incremental Prediction & Recording:**  
-   - The remaining samples are processed in batches.  
-   - For each batch, the classifier makes predictions on the unseen samples.
-   - For every sample in the batch, the outcome (1 for a correct prediction or 0 for an incorrect one) is recorded along with the current training set size.
+    - The remaining samples are processed in batches.  
+    - For each batch, the classifier makes predictions on the unseen samples.
+    - For every sample in the batch, the outcome (1 for a correct prediction or 0 for an incorrect one) is recorded along with the current training set size.
 
 3. **Training Set Expansion:**  
-   After recording the prediction outcomes, the new samples are added to the training set, and the classifier is retrained. This iterative process continues until all samples have been processed.
+    After recording the prediction outcomes, the new samples are added to the training set, and the classifier is retrained. This iterative process continues until all samples have been processed.
 
-4. **Posterior Distribution Computation:**  
-   Based on the recorded IV outcomes, the probability to classify a new sample correctly for a given training set size \( n \) is modeled as:
-
-   $$
-   p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
-   $$
+4. **Posterior Distribution Computation:**
+    Based on the recorded IV outcomes, the probability to classify a new sample correctly for a given training set size \( n \) is modeled as:
+    
+    $$
+    p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
+    $$
      
-   Here, the *asymptote* represents the classifier’s theoretical accuracy as \( n \to \infty \), and the *offset factor* controls the decline from the asymptote for finite \( n \).  
-   Using the Metropolis-Hastings algorithm (an MCMC sampler), we compute the posterior distribution for these model parameters. This posterior is computed separately for each class (label) in the dataset, enabling both class-specific accuracy assessments and aggregated metrics.
+    Here, the *asymptote* represents the classifier’s theoretical accuracy as \( n \to \infty \), and the *offset factor* controls the decline from the asymptote for finite \( n \).  
+    Using the Metropolis-Hastings algorithm (an MCMC sampler), we compute the posterior distribution for these model parameters. This posterior is computed separately for each class (label) in the dataset, enabling both class-specific accuracy assessments and aggregated metrics.
 
-6. **Aggregation to Overall Metrics:**  
-   Two principal aggregated accuracy metrics are derived:
-   - **Balanced Accuracy (bacc):** Formed by convolving the per-label accuracy distributions with equal weights.
-   - **Overall Accuracy (acc):** Derived from a weighted sum of the per-label accuracies, with weights given by the prevalence (frequency) of each label in the dataset.
+5. **Outputs:**
+    The IV process produces several types of outputs, each reflecting a different aspect of classifiers performance:
+    - **Asymptotic Accuracy Distribution:**  
+      For each label, IV provides a posterior distribution of the *asymptote* parameter. This distribution represents the classifier’s expected accuracy when trained on an infinitely large dataset.
+    - **Finite Training Set Accuracy Distribution:**  
+      In addition to the asymptotic case, IV can compute the accuracy distribution for any specific training set size (n). For each MCMC sample, the accuracy at size n is calculated using  
+      $$
+      p_n = \text{asymptote} - \frac{\text{offset\_factor}}{n},
+      $$  
+      and the collection of these values forms a distribution for the accuracy at that particular n.
+    - **Overall Accuracy Distributions:**  
+      Instead of assessing a single label, IV also allows evaluation of the classifier’s performance over the full dataset. Two metrics are available:
+      - **Balanced Accuracy (bacc):**  
+        This is obtained by convolving the per-label accuracy distributions with equal weights, ensuring that all labels contribute equally.
+      - **Standard Accuracy (acc):**  
+        This metric is computed by convolving the per-label distributions with weights proportional to the frequency of each label in the dataset.
+    - **Development over Trainingset size:**
+      Another alternative is to observe the development of the accuracy while the trainingset increases and therefore the classifier improves. To do so, one of the prior functions is run multiple times with n values from 1 to 100. TODO: Elaborate
 
 ---
 
