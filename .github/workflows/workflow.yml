@@ -19,8 +19,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          # Lade das Quarto-Paket in der Version 1.3.359 herunter – passe diese Version an, falls erforderlich
-          wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.359/quarto-1.3.359-linux-amd64.deb
+          wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/changelog.md
           sudo dpkg -i quarto-1.3.359-linux-amd64.deb
 
       - name: Render Quarto document to PDF
