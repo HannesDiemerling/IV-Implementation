@@ -68,6 +68,7 @@ Independent Validation exhibited a tendency to be biased in cases of small datas
 An implementation of independent validation in Python follows.
 
 # Methods
+This section outlines the Independent Validation process and its implementation.
 
 ## IV Process Description
 
