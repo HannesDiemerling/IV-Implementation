@@ -29,10 +29,10 @@ jobs:
           sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-latex-extra
 
       - name: Render Quarto document to PDF
-        run: quarto render document.qmd --to pdf
+        run: quarto render iv_in_pythond.md --to pdf
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: rendered-pdf
-          path: document.pdf
+          path: iv_in_python_rendered.pdf
