@@ -38,4 +38,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rendered-pdf
-          path: iv_in_python.pdf
+          path: iv_in_python_rendered.pdf
