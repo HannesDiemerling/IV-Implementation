@@ -27,6 +27,8 @@ format:
 
 ---
 
+THIS IS ONLY A TEST
+
 # Introduction
 
 Group comparisons are a common task in the social sciences, as evidenced by the plethora of research papers that have been published [@wee_comparison_2000; @weisberg_gender_2011; @zhao_comparison_2020]. 
