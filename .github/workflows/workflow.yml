@@ -31,8 +31,11 @@ jobs:
       - name: Render Quarto document to PDF
         run: quarto render iv_in_python.md --to pdf
 
+      - name: Rename PDF file
+        run: mv iv_in_python.pdf iv_in_python_rendered.pdf
+
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: rendered-pdf
-          path: iv_in_python_rendered.pdf
+          path: iv_in_python.pdf
