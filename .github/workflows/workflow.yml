@@ -19,14 +19,17 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/quarto-1.6.40-linux-amd64.deb
-          sudo dpkg -i quarto-1.6.40-linux-amd64.deb
+          # Lade die neueste Version von Quarto herunter und speichere sie als "quarto-linux-amd64.deb"
+          wget -O quarto-linux-amd64.deb https://github.com/quarto-dev/quarto-cli/releases/latest/download/quarto-linux-amd64.deb
+          sudo dpkg -i quarto-linux-amd64.deb
+
+      - name: Install LaTeX (TexLive)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-latex-extra
 
       - name: Render Quarto document to PDF
-        run: quarto render iv_in_python.md --to pdf
-
-      - name: Install TinyTeX
-        run: quarto install tinytex
+        run: quarto render document.qmd --to pdf
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
