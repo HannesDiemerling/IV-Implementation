@@ -20,7 +20,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wget
           # Lade die neueste Version von Quarto herunter und speichere sie als "quarto-linux-amd64.deb"
-          wget -O quarto-linux-amd64.deb https://github.com/quarto-dev/quarto-cli/releases/latest/download/quarto-linux-amd64.deb
+          wget -O https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/quarto-1.6.40-linux-amd64.deb
           sudo dpkg -i quarto-linux-amd64.deb
 
       - name: Install LaTeX (TexLive)
