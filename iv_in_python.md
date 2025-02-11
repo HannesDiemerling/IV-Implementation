@@ -109,16 +109,12 @@ Prior times likelihood gives a distribution that looks like the posterior distri
 
 ## Output
 
-For each sample of asymptote and offset_factor in the posterior distribution an accuracy value for any trainingset size can be computed. This way, given a trainingset size {n} a distribution of the accuracy can be computed by computing the accuracy value for each sample, giving a sample of the accuracy distribution. 
 
-This whole process is done seperately for each label. Combining the accuracy distributions for all labels to get a global accuracy can be done by getting the convolution of the distributions. This will yield the balanced accuracy. If the distributions for each label are weighted by the frequency that label occurs the result is the normal global accuracy. 
+This whole process of computing the posterior is done seperately for each class. For each class the distribution of the asymptote parameter can be returned. This represents the asymptotical accuracy that the classfier would reach for an infinite amount of data. In addition to the accuracy for each class also the accuracy for the whole dataset can be generated. In this case a distinction needs to be made between the accuracy and the balanced accuracy. For the normal accuracy the classes are (usually implicitly) weighted by their frequency in the dataset. The balanced accuracy weights the classes all equally independent from their frequency. Either way all weights add up to one. Both, balanced and normal accuracy are achieved by first multiplying the random variable for each class with its weight. Then the new distributions are convolved giving the final distribution for balanced or normal accuracy.
 
-The result is a distribution for the accuracy of a label or global balanced accuracy or global normal accuracy. These distributions can be gotten for the asymptotical theoretical values but also for any specific finite trainingset size.
+Alternatively to using the asymptotical accuracy, it is also possible to obtain a posterior distribution for any trainingset size. For a trainingset size n this is acheived by going through the samples of asymptote and offset factor of the posterior distribution and computing p_n for each. This gives then many samples for p_n making together the posterior distribution. Doing this for each label gives multiple accuracy distributions that can be combined the same way as in the asymptotical case to achieve normal or balanced global accuracy. 
 
-
-Note: this is why the trainingset size needs to be recorded as well
-Note: another reason to not start with a trainset size of zero is that this formular then divids by zero.
-
+# Next chapter
 
 1. **Initialization:**  
     A portion of the available data (the amount is user-definable) is used to train a classifier instance. This initial training set must be smaller than the complete dataset.
