@@ -30,7 +30,7 @@ format:
 # Introduction
 
 Research in behavioral and social science freuqently uses group comparisons, as evidenced by a plethora of research papers [e.g., @wee_comparison_2000; @weisberg_gender_2011; @zhao_comparison_2020]. 
-A variety of statistical tools are available for univariate comparisons, including parametric tests such as z-tests, t-tests, ANOVAs and Levene's test [@fisher_frequency_1915; further citations missing]. 
+A variety of statistical tools are available for univariate comparisons, including parametric tests such as z-tests, t-tests, ANOVAs and Levene's test [@fisher_frequency_1915; XXX further citations missing]. 
 In fact, in a systematic review of major Canadian psychology journals, Counsell and Harlow [-@counsell_reporting_2017] found that 40% of analyses used simple mean comparisons like ANOVA.
 A variety of methods is available for group comparisons for multidimensional purposes. 
 However, all of those are predicated on assumptions regarding the model that the data is assumed to follow [@kim_classifiers_2018]. 
@@ -73,12 +73,14 @@ In this article, an implementation of IV in Phython is introduced. It applies a 
 
 
 ---
-# Methods
-This section outlines the Independent Validation process and its implementation.
 
-## IV Process Description
+# IV Process Description
 
-The IV process can be divided into the following steps:
+To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a point and records the result and then adds this point to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
+
+The startsize for the trainset can theoretically be zero, in this case the classifier starts by guessing the first sample. Then it would train on the very small trainset of a single sample and logically choose the same label for the second sample. In Practice it is not useful to start with a startset size of 0 for multiple reasons. The information gained on the first sample is zero and on the second sample only an information about the amounts of the different labels. This is because the chance to classify the first sample correctly is 1/amount of labels and the probability to predict the second is the probability for both samples to have the same label. Therefore the information whether the first two samples are predicted correctly or not is not dependent on the realtion between features and labels and therefore not that interesting. 
+Another reason why starting with a trainset size of zero is the practical problem that some classifiers need a certain minimum amount of samples to work. An example is the K-nearest Neighbor classifier that predicts a new sample by taking a majority voting of the k nearest neighbors. Logically a trainset would have to have at least k samples (and if it had exactly k samples a new sample would have exactly these k samples as nearest neighbors, so the classification would be independent from the features of the new sample). For some linear 
+
 
 1. **Initialization:**  
     A portion of the available data (the amount is user-definable) is used to train a classifier instance. This initial training set must be smaller than the complete dataset.
