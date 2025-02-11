@@ -76,10 +76,39 @@ In this article, an implementation of IV in Phython is introduced. It applies a 
 
 # IV Process Description
 
-To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a point and records the result and then adds this point to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
+To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a point (XXX Batch) and records the result and then adds this point to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
+
+## predicting samples
 
 The startsize for the trainset can theoretically be zero, in this case the classifier starts by guessing the first sample. Then it would train on the very small trainset of a single sample and logically choose the same label for the second sample. In Practice it is not useful to start with a startset size of 0 for multiple reasons. The information gained on the first sample is zero and on the second sample only an information about the amounts of the different labels. This is because the chance to classify the first sample correctly is 1/amount of labels and the probability to predict the second is the probability for both samples to have the same label. Therefore the information whether the first two samples are predicted correctly or not is not dependent on the realtion between features and labels and therefore not that interesting. 
-Another reason why starting with a trainset size of zero is the practical problem that some classifiers need a certain minimum amount of samples to work. An example is the K-nearest Neighbor classifier that predicts a new sample by taking a majority voting of the k nearest neighbors. Logically a trainset would have to have at least k samples (and if it had exactly k samples a new sample would have exactly these k samples as nearest neighbors, so the classification would be independent from the features of the new sample). For some linear 
+Another reason why starting with a trainset size of zero is the practical problem that some classifiers need a certain minimum amount of samples to work. An example is the K-nearest Neighbor classifier that predicts a new sample by taking a majority voting of the k nearest neighbors. Logically a trainset would have to have at least k samples (and if it had exactly k samples a new sample would have exactly these k samples as nearest neighbors, so the classification would be independent from the features of the new sample). 
+<!-- Also the formular doesn't work for n=0 wegen zero division. -->
+In this implementation the default value for the startsize of the trainset is 2, this is also a good value for most cases, if data is plenty, increasing the start trainset size to 10 makes sense, as early values are often less stable. 
+
+As a first step in IV the classifier is trained on the starting trainset being a subset of the full datset. Then this classifier predicts a batch of samples. For each sample in that batch it is recorded whether that sample was classified correctly and on which trainset size the classifier was currently trained (which would be the same value for all samples of the same batch). Then this batch is added to the trainset and the classifier is retrained. Therfore the classifier gets retrained batch size / dataset size - trainset start size times. For a small batch size and a big dataset this can be computationally intensive. For big datasets a batch size of about a fifth of the dataset size works fine. For small datasets the default and minimum value of 1 leads to the best estimation of the asymptotical accuracy, though the difference is minimal. A batch size higher than a third of the dataset is not recommended.
+
+## computing posterior
+
+The accuracy with which a sample is classified correctly increases with the increasing training set. Braun, Eckert and von Oertzen [@braun_independent_2023] found that the accuracy in dependence of the trainset size can be modeled witht his function:
+$$
+p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
+$$
+Where the *asymptote* represents the classifier’s theoretical accuracy as \( n \to \infty \), and the *offset factor* controls the decline from the asymptote for finite \( n \).
+Both are parameters dependend on the dataset and classifier and can be estimated with bayesian parameter estimation. The Prior for the bayesian estimation is uniform between 0 and 1 for the asymptote and uniform positive for the offset factor. Then the likelihood for any possible combination of asymptote and offset_factor can be computed by using the above formular for every prediction recorded in the prior step. For a successfully predicted sample the likelihood for asymptote and offset_factor is 
+$$
+\text{Likelihood} = p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
+$$
+and for an unsuccessfully predicted sample it is 1 minus that. Therefore the full likelihood formular comes out to be:
+$$
+Likelihood = outcome*p_n(outcome=1) + (1 - outcome) * (1 - p_n(outcome=1))
+$$
+Multiplying this for every recorded prediction gives the likelihood for the pair of asymptote and likelihood. 
+Practically in the implementation instead the logarithm for each is taken and then these are summed up to be the logarithmic likelihood. This improves numerical stability and speeds up the process.
+
+Prior times likelihood gives a distribution
+
+Note: this is why the trainingset size needs to be recorded as well
+Note: another reason to not start with a trainset size of zero is that this formular then divids by zero.
 
 
 1. **Initialization:**  
