@@ -105,7 +105,16 @@ $$
 Multiplying this for every recorded prediction gives the likelihood for the pair of asymptote and likelihood. 
 Practically in the implementation instead the logarithm for each is taken and then these are summed up to be the logarithmic likelihood. This improves numerical stability and speeds up the process.
 
-Prior times likelihood gives a distribution
+Prior times likelihood gives a distribution that looks like the posterior distribution but has an area that is not equal to one. To get the actual posterior distribution one could compute the integral of this distribution and divide by it. This would normalize the area to one. An alternative option is to use a marcov chain monte carlo (MCMC) which makes it possible to sample from the actual posterior distribution based on the prior and likelihood. The MCMC implemented in this paper uses the metropolis hastings algorithm. This has the advantage of being computationally more efficient and more robust. Also having the posterior distribution as a set of samples allows for manipulations that would require the extra step of sampling if the numerical variant was used instead of MCMC. MCMC takes some parameters that can be specified when called.
+
+## Output
+
+For each sample of asymptote and offset_factor in the posterior distribution an accuracy value for any trainingset size can be computed. This way, given a trainingset size {n} a distribution of the accuracy can be computed by computing the accuracy value for each sample, giving a sample of the accuracy distribution. 
+
+This whole process is done seperately for each label. Combining the accuracy distributions for all labels to get a global accuracy can be done by getting the convolution of the distributions. This will yield the balanced accuracy. If the distributions for each label are weighted by the frequency that label occurs the result is the normal global accuracy. 
+
+The result is a distribution for the accuracy of a label or global balanced accuracy or global normal accuracy. These distributions can be gotten for the asymptotical theoretical values but also for any specific finite trainingset size.
+
 
 Note: this is why the trainingset size needs to be recorded as well
 Note: another reason to not start with a trainset size of zero is that this formular then divids by zero.
