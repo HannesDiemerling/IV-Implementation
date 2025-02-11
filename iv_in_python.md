@@ -114,6 +114,64 @@ This whole process of computing the posterior is done seperately for each class.
 
 Alternatively to using the asymptotical accuracy, it is also possible to obtain a posterior distribution for any trainingset size. For a trainingset size n this is acheived by going through the samples of asymptote and offset factor of the posterior distribution and computing p_n for each. This gives then many samples for p_n making together the posterior distribution. Doing this for each label gives multiple accuracy distributions that can be combined the same way as in the asymptotical case to achieve normal or balanced global accuracy. 
 
+## XXX
+
+### Is there a group difference
+Assume somebody, lets call her Annabelle, want to find out if there is a difference between two groups. Annabelle uses a Support Vector Machine classifier and IV to get the accuracy of the classifier. To find if there is at all any difference between the groups the question she asks is: How high is the probability that the classifiers asymptotic accuracy is higher or equal to guessing? For a balanced dataset guessing would have an accuracy of 50%. As Annabelle is interested in finding if there is a group difference at all she can use the asymptotic accuracy the SVM would have for infinite data from the groups. The distribution for the (global) asymptotic accuracy is a result of the IV (since the dataset is balanced, balanced and normal global accuracy are identical). Then the hypothesis of no group difference can be rejected with a significance niveau of the integral of 0 to 0.5 of the accuracy distribution. 
+
+### Comparing classifers
+Lets say Annabelle found that there is a strong difference between the groups. Now she wants to build a classifier for inference but she is unsure what kind of classifer she should use. 
+Her final choice will be trained on a dataset of 25 samples, this is the trainset size for which she wants to optimize the accuracy. Annabelle runs iv with multiple classifers like K-Nearest Neighbor, Random Forest and Linear Regression. As an output she generates the distribution for the global accuracy for a trainset size of 25. For the SVM she does not need to rerun the IV but can simply compute the distribution for global accuracy of 25. Now she has 4 different distributions for the accuracy and can see not only which has the highest MAP or mean but also how much the areas overlap giving her the information that most of these classifers are very similarly good. 
+
+### 
+
+
+# Results
+
+
+## Synthetic data
+
+To estimate the quality of a KNN classifier run on some synthetic data. For the data the features are normally distributed with different means and standard deviations for the different groups. The data consists of three different groups that are not balanced. 
+
+TODO: Add Details about data and classifier. 
+
+![Estimated Accuracy Distribution of a Classifier Trained on 50 samples of the synthetic dataset.](demo/synthetic/acc50_1.png "Figure 1. Accuracy Distribution - 50 Samples")
+
+![Estimated Balanced Accuracy Distribution of a Classifier Trained on 50 samples of the synthetic dataset.](demo/synthetic/bacc50_1.png "Balanced Accuracy Distribution - 50 Samples")
+
+And now the improved variant. Though this needs to be rechecked whether this is realistic.
+
+![Estimated Accuracy Distribution of a Classifier Trained on 100 samples of the synthetic dataset.](demo/synthetic/acc100_1.png "Figure 1. Accuracy Distribution - 100 Samples")
+
+![Estimated Balanced Accuracy Distribution of a Classifier Trained on 100 samples of the synthetic dataset.](demo/synthetic/bacc50_1.png "Balanced Accuracy Distribution - 100 Samples")
+
+If you are really interested in the development these metrics over increasing sample size you can plot this as well.
+
+![Development of Balanced Accuracy Distribution of a Classifier on the synthetic dataset.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+## The Titanic
+
+The tragic sinking of the Titanic in 1912, which claimed the lives of over 1,500 passengers and crew, remains one of the most infamous maritime disasters in history; through the lens of modern data analysis, this historical event provides a unique opportunity to classify and predict survival outcomes based on passenger demographics and circumstances.
+
+Is it just random chance who survived and who didn't? Or is it dependent on some of the features recorded in this dataset?
+If the classifier is capable of predicting the outcomes of the passengers significantly better than chance there must be a difference between the group that the classifier detects.
+
+For this it is interesting if the classifier would be capable of finding a difference when trained on infinite amounts of data. Therefore we observe the asymptotical accuracy. 
+
+![Asymnptotical Accuracy Distribution of a Classifier on the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+Alternatively if we want to use it for inference to predict if somebody on board the titanic is going to drown and we want to know how accurate our own predictions are, we can observe the accuracy for a training set of the size of our actual training set.
+
+![Accuracy Distribution of a Classifier trained on ??? Samples from the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+Or lets assume we have different classification algorithms and want to find out which is best for our scenario. In that case it would be interesting to look at the development of the accuracy over sample size because some classifiers perform better for small sample sizes but scale less than other classifiers which then outperform the first ones as soon as a certain threshold is reached.
+
+TODO: Can this work in accordance with the assumed formular? Or does the formular imply that all classifiers scale similarly? I fear its the latter. 
+
+![Accuracy Development of a Classifier on the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+
+
 # Next chapter
 
 1. **Initialization:**  
