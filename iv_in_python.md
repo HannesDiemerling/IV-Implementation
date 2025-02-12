@@ -72,7 +72,7 @@ In this article, an implementation of IV in Phython is introduced. It applies a 
 
 ___
 
-# IV Process Description
+# IV Background and Package Implementation
 
 To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a point (XXX Batch) and records the result and then adds this point to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
 
@@ -85,20 +85,50 @@ p_n(\text{outcome} = 1) = a - \frac{b}{n}
 $$ {#eq-likelihood}
 
 Where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that  controls the reduction from the asymptote for finite training sample size \( n \).
-Both parameters depend on the classifier. They can be estimated by a Bayesian parameter estimation. We use a uniform prior between 0 and 1 for $a$ and a flat prior on the positive numbers for $b$. The likelihood for a correct classification at any value of $(a,b)$ is then given by Equation (@eq-likelihood) , and one minus that for a failed classification. The likelihood of the complete set of classification results (containing the training sample size $n$ and whether the classification was correct) is then given by the product of the likelihoods for each classification result.   
-In the current study, the log likelihood is used instead to avoid numerical problems. With that, a Monte Carlo Markov Chain (MCMC; XXX citation is missing) is applied to sample from the posterior distribution of $a$ and $b$. The MCMC used in this implementation is a Metropolis Hastings algorithm, since it is computationally more efficient and more robust (XXX needs a citation). The MCMC can be started with different burn-in size (default 100), thinning (default XXX), target number of samples (default XXX), and step size for the next candidate choice (default $(XXX,XXX)$). Larger burn-in sizes, number of samples and thinning will improve the sample quality, but at the cost of higher running time. However, since the MCMC operates on the classification results that will not be recomputed, adding more samples is less problematic. 
-The MCMC is done separately for the accuracy of each class. For each class, it provides a distribution of $a$ and $b$, where  $a$ represent the asymptotical accuracy in that class, i.e., the accuracy the classifier would reach for an infinite amount of training data. The user of the package can access the distribution of $a$  for each class directly as a list of samples, but they can also request specific information like the MAP accuracy in that class, the posterior mean, the standard deviation, the probability to exceed a certain threshold (that is, the cumulative distribution function), or the probability that the asymptotic accuracy exceeds the asymptotic accuracy of a second distribution (e.g., a different classifier that the user wishes to compare against). In addition to the accuracy for each class, the package provides the accuracy and the BAC for the whole dataset, as well as any other weighting of the class accuracies. These metrics are a weighted um of the individual class accuracies. in the balanced accuracy, all classes are weighted equally, which provides an accuracy index which is independent of the class sizes in the data set. The combination of class accuracies are computed by first multiplying the random variable for each class with its weight, and then convolving the distributions into a distribution for the weighted sum.
+Both parameters depend on the classifier. They can be estimated by a Bayesian parameter estimation. 
+We use a uniform prior between 0 and 1 for $a$ and a flat prior on the positive numbers for $b$. 
+The likelihood for a correct classification at any value of $(a,b)$ is then given by Equation (@eq-likelihood) , and one minus that for a failed classification. 
+The likelihood of the complete set of classification results (containing the training sample size $n$ and whether the classification was correct) is then given by the product of the likelihoods for each classification result.   
 
-The package also combines the posteriors of $a$ and $b$ to provide a distribution of the expected accuracy for any finite sample size. As for the asymptotic accuracy, the class accuracies for all classes can be accessed as well as the total accuracy, balanced accuracy, or any other weighting of class accuracies. Using the same methods as above, again the MAP, mean, standard deviation, or any cumulative probability of the probability distributions are provided by the package. 
+In the current study, the log likelihood is used instead to avoid numerical problems. 
+With that, a Monte Carlo Markov Chain [@metropolis1953equation] is applied to sample from the posterior distribution of $a$ and $b$. The MCMC used in this implementation is a Metropolis Hastings algorithm, since it is computationally more efficient and more robust [@hastings1970monte]. 
+The MCMC can be started with different burn-in size (default 100), thinning (default XXX), target number of samples (default XXX), and step size for the next candidate choice (default $(XXX,XXX)$). 
+Larger burn-in sizes, number of samples and thinning will improve the sample quality, but at the cost of higher running time. However, since the MCMC operates on the classification results that will not be recomputed, adding more samples is less problematic. 
+
+The MCMC is done separately for the accuracy of each class. 
+For each class, it provides a distribution of $a$ and $b$, where  $a$ represent the asymptotical accuracy in that class, i.e., the accuracy the classifier would reach for an infinite amount of training data. 
+The user of the package can access the distribution of $a$  for each class directly as a list of samples, but they can also request specific information like the MAP accuracy in that class, the posterior mean, the standard deviation, the probability to exceed a certain threshold (that is, the cumulative distribution function), or the probability that the asymptotic accuracy exceeds the asymptotic accuracy of a second distribution (e.g., a different classifier that the user wishes to compare against). 
+In addition to the accuracy for each class, the package provides the accuracy and the BAC for the whole dataset, as well as any other weighting of the class accuracies. 
+These metrics are a weighted um of the individual class accuracies. in the balanced accuracy, all classes are weighted equally, which provides an accuracy index which is independent of the class sizes in the data set. 
+The combination of class accuracies are computed by first multiplying the random variable for each class with its weight, and then convolving the distributions into a distribution for the weighted sum.
+
+The package also combines the posteriors of $a$ and $b$ to provide a distribution of the expected accuracy for any finite sample size. 
+As for the asymptotic accuracy, the class accuracies for all classes can be accessed as well as the total accuracy, balanced accuracy, or any other weighting of class accuracies. 
+Using the same methods as above, again the MAP, mean, standard deviation, or any cumulative probability of the probability distributions are provided by the package. 
 
 ## predicting samples
 
-The startsize for the trainset can theoretically be zero, in this case the classifier starts by guessing the first sample. Then it would train on the very small trainset of a single sample and logically choose the same label for the second sample. In Practice it is not useful to start with a startset size of 0 for multiple reasons. The information gained on the first sample is zero and on the second sample only an information about the amounts of the different labels. This is because the chance to classify the first sample correctly is 1/amount of labels and the probability to predict the second is the probability for both samples to have the same label. Therefore the information whether the first two samples are predicted correctly or not is not dependent on the realtion between features and labels and therefore not that interesting. 
-Another reason why starting with a trainset size of zero is the practical problem that some classifiers need a certain minimum amount of samples to work. An example is the K-nearest Neighbor classifier that predicts a new sample by taking a majority voting of the k nearest neighbors. Logically a trainset would have to have at least k samples (and if it had exactly k samples a new sample would have exactly these k samples as nearest neighbors, so the classification would be independent from the features of the new sample). 
+The startsize for the trainset can theoretically be zero, in this case the classifier starts by guessing the first sample. 
+Then it would train on the very small trainset of a single sample and logically choose the same label for the second sample. 
+In Practice it is not useful to start with a startset size of 0 for multiple reasons. 
+The information gained on the first sample is zero and on the second sample only an information about the amounts of the different labels. 
+This is because the chance to classify the first sample correctly is 1/amount of labels and the probability to predict the second is the probability for both samples to have the same label. 
+Therefore the information whether the first two samples are predicted correctly or not is not dependent on the realtion between features and labels and therefore not that interesting. 
+
+Another reason why starting with a trainset size of zero is the practical problem that some classifiers need a certain minimum amount of samples to work. 
+An example is the K-nearest Neighbor classifier that predicts a new sample by taking a majority voting of the k nearest neighbors. 
+Logically a trainset would have to have at least k samples (and if it had exactly k samples a new sample would have exactly these k samples as nearest neighbors, so the classification would be independent from the features of the new sample). 
 <!-- Also the formular doesn't work for n=0 wegen zero division. -->
 In this implementation the default value for the startsize of the trainset is 2, this is also a good value for most cases, if data is plenty, increasing the start trainset size to 10 makes sense, as early values are often less stable. 
 
-As a first step in IV the classifier is trained on the starting trainset being a subset of the full datset. Then this classifier predicts a batch of samples. For each sample in that batch it is recorded whether that sample was classified correctly and on which trainset size the classifier was currently trained (which would be the same value for all samples of the same batch). Then this batch is added to the trainset and the classifier is retrained. Therfore the classifier gets retrained batch size / dataset size - trainset start size times. For a small batch size and a big dataset this can be computationally intensive. For big datasets a batch size of about a fifth of the dataset size works fine. For small datasets the default and minimum value of 1 leads to the best estimation of the asymptotical accuracy, though the difference is minimal. A batch size higher than a third of the dataset is not recommended.
+As a first step in IV the classifier is trained on the starting trainset being a subset of the full datset. Then this classifier predicts a batch of samples. 
+For each sample in that batch it is recorded whether that sample was classified correctly and on which trainset size the classifier was currently trained (which would be the same value for all samples of the same batch). 
+Then this batch is added to the trainset and the classifier is retrained. 
+Therfore the classifier gets retrained batch size / dataset size - trainset start size times. 
+For a small batch size and a big dataset this can be computationally intensive. 
+For big datasets a batch size of about a fifth of the dataset size works fine. 
+For small datasets the default and minimum value of 1 leads to the best estimation of the asymptotical accuracy, though the difference is minimal. 
+A batch size higher than a third of the dataset is not recommended.
 
 ## computing posterior
 
