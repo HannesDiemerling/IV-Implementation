@@ -24,7 +24,6 @@ format:
   apaquarto-pdf:
     documentmode: man
     keep-tex: true
-
 ---
 
 # Introduction
@@ -72,6 +71,7 @@ The implementation of this method was done in R [@kim_classifiers_2018; @braun_i
 In this article, an implementation of IV in Phython is introduced. It applies a Bayesian algorithm that can compute the accuracy of the classifier within each class (e.g., the specificity and sensitivity for detecting a depression), on the whole data set, and the Balanced Accuracy (BAC) for a weighted comparison of the class. For each of these accuracies, the posterior distribution can be obtained for the asymptotic accuarcy or for every training set size. A small simulation is provided to explain the usage of the package and to demonstrate the results. The article closes by a discussion of the package for the research field. 
 
 ---
+
 # IV Process Description
 
 To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a point (XXX Batch) and records the result and then adds this point to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
