@@ -70,7 +70,7 @@ The implementation of this method was done in R [@kim_classifiers_2018; @braun_i
 
 In this article, an implementation of IV in Phython is introduced. It applies a Bayesian algorithm that can compute the accuracy of the classifier within each class (e.g., the specificity and sensitivity for detecting a depression), on the whole data set, and the Balanced Accuracy (BAC) for a weighted comparison of the class. For each of these accuracies, the posterior distribution can be obtained for the asymptotic accuarcy or for every training set size. A small simulation is provided to explain the usage of the package and to demonstrate the results. The article closes by a discussion of the package for the research field. 
 
----
+___
 
 # IV Process Description
 
@@ -225,7 +225,7 @@ TODO: Can this work in accordance with the assumed formular? Or does the formula
     - **Development over Trainingset size:**
       Another alternative is to observe the development of the accuracy while the trainingset increases and therefore the classifier improves. To do so, one of the prior functions is run multiple times with n values from 1 to 100. TODO: Elaborate
 
----
+___
 
 ## Demo
 
@@ -262,7 +262,7 @@ The implementation is demonstrated through a collection of example scripts (e.g.
 - **Figure 2:** Density plots for balanced accuracy with varying training sizes.
 - **Figure 3:** Development curves showing mean accuracy and quartile bounds over increasing training set sizes.
 
----
+___
 
 ## Testing Procedures
 
@@ -284,7 +284,7 @@ Robustness and correctness of the IV implementation are ensured via a comprehens
 
 These tests are implemented using Python's `unittest` framework and verify the statistical properties and consistency of the simulation outcomes.
 
----
+___
 
 ## Example
 
@@ -335,7 +335,7 @@ Assess the performance of a classifier that predicts the presence of a disease b
 - **Development curves** (accuracy as a function of training set size) help determine how quickly the classifier's performance converges and whether additional data could significantly improve accuracy.
 - The derived plots (similar to those generated in our demos) serve as both a validation tool and a means for comparative analysis in applied research.
 
----
+___
 
 By combining a rigorous, incremental validation process with robust posterior inference, the described methods enable the practical application of Independent Validation in varied research settings—from artificial simulations to real data scenarios such as biomedical diagnostics.
 
