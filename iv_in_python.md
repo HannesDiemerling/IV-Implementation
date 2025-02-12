@@ -87,7 +87,7 @@ $$ {#eq-likelihood}
 Where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that  controls the reduction from the asymptote for finite training sample size \( n \).
 Both parameters depend on the classifier. They can be estimated by a Bayesian parameter estimation. 
 We use a uniform prior between 0 and 1 for $a$ and a flat prior on the positive numbers for $b$. 
-The likelihood for a correct classification at any value of $(a,b)$ is then given by Equation (@eq-likelihood) , and one minus that for a failed classification. 
+The likelihood for a correct classification at any value of $(a,b)$ is then given by Equation (@eq-likelihood), and one minus that for a failed classification. 
 The likelihood of the complete set of classification results (containing the training sample size $n$ and whether the classification was correct) is then given by the product of the likelihoods for each classification result.   
 
 In the current study, the log likelihood is used instead to avoid numerical problems. 
@@ -132,19 +132,25 @@ A batch size higher than a third of the dataset is not recommended.
 
 ## computing posterior
 
-The accuracy with which a sample is classified correctly increases with the increasing training set. Braun, Eckert and von Oertzen [@braun_independent_2023] found that the accuracy in dependence of the trainset size can be modeled witht his function:
+The accuracy with which a sample is classified correctly increases with the increasing training set. Braun, Eckert and von Oertzen [@braun_independent_2023] found that the accuracy in dependence of the trainset size can be modeled witht his equation (@eq-asymptote):
+
 $$
 p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
-$$
+$$ {#eq-asymptote}
+
 Where the *asymptote* represents the classifier’s theoretical accuracy as \( n \to \infty \), and the *offset factor* controls the decline from the asymptote for finite \( n \).
-Both are parameters dependend on the dataset and classifier and can be estimated with bayesian parameter estimation. The Prior for the bayesian estimation is uniform between 0 and 1 for the asymptote and uniform positive for the offset factor. Then the likelihood for any possible combination of asymptote and offset_factor can be computed by using the above formular for every prediction recorded in the prior step. For a successfully predicted sample the likelihood for asymptote and offset_factor is 
+Both are parameters dependend on the dataset and classifier and can be estimated with bayesian parameter estimation. The Prior for the bayesian estimation is uniform between 0 and 1 for the asymptote and uniform positive for the offset factor. Then the likelihood for any possible combination of asymptote and offset_factor can be computed by using the above formular for every prediction recorded in the prior step. For a successfully predicted sample the likelihood for asymptote and offset_factor is defined by the equation (@eq-likelihood2):
+
 $$
 \text{Likelihood} = p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
+$$ {#eq-likelihood2}
+
+and for an unsuccessfully predicted sample it is 1 minus that. Therefore the full likelihood formular (@eq-likelihood3) comes out to be:
+
 $$
-and for an unsuccessfully predicted sample it is 1 minus that. Therefore the full likelihood formular comes out to be:
-$$
-Likelihood = outcome*p_n(outcome=1) + (1 - outcome) * (1 - p_n(outcome=1))
-$$
+\text{Likelihood} = outcome*p_n(outcome=1) + (1 - outcome) * (1 - p_n(outcome=1))
+$$ {#eq-likelihood3}
+
 Multiplying this for every recorded prediction gives the likelihood for the pair of asymptote and likelihood. 
 Practically in the implementation instead the logarithm for each is taken and then these are summed up to be the logarithmic likelihood. This improves numerical stability and speeds up the process.
 
