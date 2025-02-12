@@ -109,8 +109,13 @@ As Annabelle is interested in finding if there is a group difference at all, she
 Lets say Annabelle found that there is a strong difference between the groups. Now she wants to build a classifier for inference but she is unsure what kind of classifer she should use. 
 Her final choice will be trained on a dataset of 25 samples, this is the trainset size for which she wants to optimize the accuracy. Annabelle runs iv with multiple classifers like K-Nearest Neighbor, Random Forest and Linear Regression. As an output she generates the distribution for the global accuracy for a trainset size of 25. For the SVM she does not need to rerun the IV but can simply compute the distribution for global accuracy of 25. Now she has 4 different distributions for the accuracy and can see not only which has the highest MAP or mean but also how much the areas overlap giving her the information that most of these classifers are very similarly good. 
 
+<<<<<<< HEAD
 ### 
 
+=======
+### Development
+Annabelle considers getting more than 25 samples for her final classifier, but getting that data would be expensive. So before she does that, she looks at how much better the classifier would get if she had some more samples. She is also unsure on how many more samples she should get. So she looks wants to look at the development of how the balanced accuracy increases over increasing training set size. With IV she can get the balanced accuracy for every n from 1 to 100 and look at when it is good enough to satisfy her. In this implementation this proccess is directly accessable as a service. The result is a list of means (XXX or MAP's?) and some range around them that can be specified in differnt ways (XXX: Elaborate on different ways?). 
+>>>>>>> parent of 3720a6a (Storys done (second try))
 
 # Results
 
