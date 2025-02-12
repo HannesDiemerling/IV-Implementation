@@ -81,7 +81,7 @@ In IV, the classifier is trained on the initial training set and then predicts a
 The probability that a sample is classified correctly increases with as the training set size increases. Braun, Eckert and von Oertzen [-@braun_independent_2023] showed that the accuracy within each class can be approximated by
 
 $$
-p_n(outcome=1) = a - \frac{\b}{n}
+p_n(\text{outcome} = 1) = a - \frac{b}{n}
 $$ {#eq-likelihood}
 
 Where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that  controls the reduction from the asymptote for finite training sample size \( n \).
