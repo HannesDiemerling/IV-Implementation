@@ -99,6 +99,7 @@ The package also provides an option to generate plots for each of the above dist
 ## XXX
 
 ### Is there a group difference
+
 Assume somebody, lets call her Annabelle, want to find out if there is a difference in some chemical features between three types of wines, lets say between Barolo, Lugana, Primitivo
 . Annabelle uses a Support Vector Machine classifier and IV to get the accuracy of the classifier. To find if there is at all any difference between the groups the question she asks is: How high is the probability that the classifiers asymptotic accuracy is higher or equal to guessing? She uses the global balanced accuracy which would be at 1/3 for a random guessing classifer. As Annabelle is interested in finding if there is a group difference at all, she can use the asymptotic accuracy the SVM would have for infinite data from the groups. The distribution for the global asymptotic accuracy is a result of the IV. Then the hypothesis of no group difference can be rejected with a significance niveau of the integral of 0 to 1/3 of the accuracy distribution. 
 
