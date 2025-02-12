@@ -117,14 +117,20 @@ Alternatively to using the asymptotical accuracy, it is also possible to obtain 
 ## XXX
 
 ### Is there a group difference
-Assume somebody, lets call her Annabelle, want to find out if there is a difference between two groups. Annabelle uses a Support Vector Machine classifier and IV to get the accuracy of the classifier. To find if there is at all any difference between the groups the question she asks is: How high is the probability that the classifiers asymptotic accuracy is higher or equal to guessing? For a balanced dataset guessing would have an accuracy of 50%. As Annabelle is interested in finding if there is a group difference at all she can use the asymptotic accuracy the SVM would have for infinite data from the groups. The distribution for the (global) asymptotic accuracy is a result of the IV (since the dataset is balanced, balanced and normal global accuracy are identical). Then the hypothesis of no group difference can be rejected with a significance niveau of the integral of 0 to 0.5 of the accuracy distribution. 
+Assume somebody, lets call her Annabelle, want to find out if there is a difference in some chemical features between three types of wines, lets say between Barolo, Lugana, Primitivo
+. Annabelle uses a Support Vector Machine classifier and IV to get the accuracy of the classifier. To find if there is at all any difference between the groups the question she asks is: How high is the probability that the classifiers asymptotic accuracy is higher or equal to guessing? She uses the global balanced accuracy which would be at 1/3 for a random guessing classifer. As Annabelle is interested in finding if there is a group difference at all, she can use the asymptotic accuracy the SVM would have for infinite data from the groups. The distribution for the global asymptotic accuracy is a result of the IV. Then the hypothesis of no group difference can be rejected with a significance niveau of the integral of 0 to 1/3 of the accuracy distribution. 
+
+NOTE: The dataset is with real data, but we didn't find which types of wine were used.
+
+### Sensitivity and Specificity 
+Annabelle does not want to drink white wine, so she uses her classifier as a test if a wine is red (Barolo or Primitivo) or white (Lugana). Now she is interested not in the global accuracy or balanced accuracy but in the sensitivity of her test. The sensitivity is how often a wine that is actually Lugana is classified as Lugana. This is the accuracy for all samples that are actually Lugana and is also an output of the IV process. 
 
 ### Comparing classifers
-Lets say Annabelle found that there is a strong difference between the groups. Now she wants to build a classifier for inference but she is unsure what kind of classifer she should use. 
+Lets say Annabelle found that there is a strong difference between the three wines. Now she wants to build a classifier for inference but she is unsure what kind of classifer she should use. 
 Her final choice will be trained on a dataset of 25 samples, this is the trainset size for which she wants to optimize the accuracy. Annabelle runs iv with multiple classifers like K-Nearest Neighbor, Random Forest and Linear Regression. As an output she generates the distribution for the global accuracy for a trainset size of 25. For the SVM she does not need to rerun the IV but can simply compute the distribution for global accuracy of 25. Now she has 4 different distributions for the accuracy and can see not only which has the highest MAP or mean but also how much the areas overlap giving her the information that most of these classifers are very similarly good. 
 
-### 
-
+### Development
+Annabelle considers getting more than 25 samples for her final classifier, but getting that data would be expensive. So before she does that, she looks at how much better the classifier would get if she had some more samples. She is also unsure on how many more samples she should get. So she looks wants to look at the development of how the balanced accuracy increases over increasing training set size. With IV she can get the balanced accuracy for every n from 1 to 100 and look at when it is good enough to satisfy her. In this implementation this proccess is directly accessable as a service. The result is a list of means (XXX or MAP's?) and some range around them that can be specified in differnt ways (XXX: Elaborate on different ways?). 
 
 # Results
 
