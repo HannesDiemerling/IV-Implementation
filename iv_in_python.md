@@ -71,18 +71,11 @@ The implementation of this method was done in R [@kim_classifiers_2018; @braun_i
 
 In this article, an implementation of IV in Phython is introduced. It applies a Bayesian algorithm that can compute the accuracy of the classifier within each class (e.g., the specificity and sensitivity for detecting a depression), on the whole data set, and the Balanced Accuracy (BAC) for a weighted comparison of the class. For each of these accuracies, the posterior distribution can be obtained for the asymptotic accuarcy or for every training set size. A small simulation is provided to explain the usage of the package and to demonstrate the results. The article closes by a discussion of the package for the research field. 
 
-
 ---
-<<<<<<< HEAD
-# IV Process Description
-=======
->>>>>>> parent of 235c88f (Update iv_in_python.md)
-
 # IV Process Description
 
 To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a point (XXX Batch) and records the result and then adds this point to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
 
-<<<<<<< HEAD
 In IV, the classifier is trained on the initial training set and then predicts a single sample or a batch of samples. The number of correct classifications in this batch is stored for each class along with the training set size. The batch size is set to one by default. Again, with larger data sets it is advised to increase that number since information gain is then minimal, and otherwise the procedure is too time consuming. 
 
 The probability that a sample is classified correctly increases with as the training set size increases. Braun, Eckert and von Oertzen [-@braun_independent_2023] showed that the accuracy within each class can be approximated by
@@ -97,7 +90,7 @@ In the current study, the log likelihood is used instead to avoid numerical prob
 The MCMC is done separately for the accuracy of each class. For each class, it provides a distribution of $a$ and $b$, where  $a$ represent the asymptotical accuracy in that class, i.e., the accuracy the classifier would reach for an infinite amount of training data. The user of the package can access the distribution of $a$  for each class directly as a list of samples, but they can also request specific information like the MAP accuracy in that class, the posterior mean, the standard deviation, the probability to exceed a certain threshold (that is, the cumulative distribution function), or the probability that the asymptotic accuracy exceeds the asymptotic accuracy of a second distribution (e.g., a different classifier that the user wishes to compare against). In addition to the accuracy for each class, the package provides the accuracy and the BAC for the whole dataset, as well as any other weighting of the class accuracies. These metrics are a weighted um of the individual class accuracies. in the balanced accuracy, all classes are weighted equally, which provides an accuracy index which is independent of the class sizes in the data set. The combination of class accuracies are computed by first multiplying the random variable for each class with its weight, and then convolving the distributions into a distribution for the weighted sum.
 
 The package also combines the posteriors of $a$ and $b$ to provide a distribution of the expected accuracy for any finite sample size. As for the asymptotic accuracy, the class accuracies for all classes can be accessed as well as the total accuracy, balanced accuracy, or any other weighting of class accuracies. Using the same methods as above, again the MAP, mean, standard deviation, or any cumulative probability of the probability distributions are provided by the package. 
-=======
+
 ## predicting samples
 
 The startsize for the trainset can theoretically be zero, in this case the classifier starts by guessing the first sample. Then it would train on the very small trainset of a single sample and logically choose the same label for the second sample. In Practice it is not useful to start with a startset size of 0 for multiple reasons. The information gained on the first sample is zero and on the second sample only an information about the amounts of the different labels. This is because the chance to classify the first sample correctly is 1/amount of labels and the probability to predict the second is the probability for both samples to have the same label. Therefore the information whether the first two samples are predicted correctly or not is not dependent on the realtion between features and labels and therefore not that interesting. 
@@ -126,10 +119,8 @@ Multiplying this for every recorded prediction gives the likelihood for the pair
 Practically in the implementation instead the logarithm for each is taken and then these are summed up to be the logarithmic likelihood. This improves numerical stability and speeds up the process.
 
 Prior times likelihood gives a distribution that looks like the posterior distribution but has an area that is not equal to one. To get the actual posterior distribution one could compute the integral of this distribution and divide by it. This would normalize the area to one. An alternative option is to use a marcov chain monte carlo (MCMC) which makes it possible to sample from the actual posterior distribution based on the prior and likelihood. The MCMC implemented in this paper uses the metropolis hastings algorithm. This has the advantage of being computationally more efficient and more robust. Also having the posterior distribution as a set of samples allows for manipulations that would require the extra step of sampling if the numerical variant was used instead of MCMC. MCMC takes some parameters that can be specified when called.
->>>>>>> parent of 235c88f (Update iv_in_python.md)
 
 ## Output
-
 
 This whole process of computing the posterior is done seperately for each class. For each class the distribution of the asymptote parameter can be returned. This represents the asymptotical accuracy that the classfier would reach for an infinite amount of data. In addition to the accuracy for each class also the accuracy for the whole dataset can be generated. In this case a distinction needs to be made between the accuracy and the balanced accuracy. For the normal accuracy the classes are (usually implicitly) weighted by their frequency in the dataset. The balanced accuracy weights the classes all equally independent from their frequency. Either way all weights add up to one. Both, balanced and normal accuracy are achieved by first multiplying the random variable for each class with its weight. Then the new distributions are convolved giving the final distribution for balanced or normal accuracy.
 
@@ -146,16 +137,10 @@ As Annabelle is interested in finding if there is a group difference at all, she
 Lets say Annabelle found that there is a strong difference between the groups. Now she wants to build a classifier for inference but she is unsure what kind of classifer she should use. 
 Her final choice will be trained on a dataset of 25 samples, this is the trainset size for which she wants to optimize the accuracy. Annabelle runs iv with multiple classifers like K-Nearest Neighbor, Random Forest and Linear Regression. As an output she generates the distribution for the global accuracy for a trainset size of 25. For the SVM she does not need to rerun the IV but can simply compute the distribution for global accuracy of 25. Now she has 4 different distributions for the accuracy and can see not only which has the highest MAP or mean but also how much the areas overlap giving her the information that most of these classifers are very similarly good. 
 
-<<<<<<< HEAD
-### 
-
-=======
 ### Development
 Annabelle considers getting more than 25 samples for her final classifier, but getting that data would be expensive. So before she does that, she looks at how much better the classifier would get if she had some more samples. She is also unsure on how many more samples she should get. So she looks wants to look at the development of how the balanced accuracy increases over increasing training set size. With IV she can get the balanced accuracy for every n from 1 to 100 and look at when it is good enough to satisfy her. In this implementation this proccess is directly accessable as a service. The result is a list of means (XXX or MAP's?) and some range around them that can be specified in differnt ways (XXX: Elaborate on different ways?). 
->>>>>>> parent of 3720a6a (Storys done (second try))
 
 # Results
-
 
 ## Synthetic data
 
@@ -197,8 +182,6 @@ Or lets assume we have different classification algorithms and want to find out 
 TODO: Can this work in accordance with the assumed formular? Or does the formular imply that all classifiers scale similarly? I fear its the latter. 
 
 ![Accuracy Development of a Classifier on the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
-
-
 
 # Next chapter
 
@@ -356,9 +339,7 @@ Assess the performance of a classifier that predicts the presence of a disease b
 
 By combining a rigorous, incremental validation process with robust posterior inference, the described methods enable the practical application of Independent Validation in varied research settings—from artificial simulations to real data scenarios such as biomedical diagnostics.
 
-
 # Results
-
 
 ## Synthetic data
 
@@ -405,17 +386,13 @@ TODO: Can this work in accordance with the assumed formular? Or does the formula
 
 If all groups have the same distribution for the features, the results of IV look like this:
 
-
 # Discussion
 
 ## The last paragraph
 Independent validation is the method of choice to optimize for statistically accurate results. 
 With this Python implementation it can now easily be used in combination with classifiers from the sklearn library. 
 
-
-
 # References
-
 
 ::: {#refs}
 :::
