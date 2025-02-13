@@ -22,7 +22,7 @@ draft-date: false
 format:
   # Can be jou (journal), man (manuscript), stu (student), or doc (document)
   apaquarto-pdf:
-    documentmode: man
+    documentmode: jou
     keep-tex: true
 ---
 
@@ -124,8 +124,10 @@ Then, she selects an initial training set size of five and the default batch siz
 With this setup, she runs the IV process.
 She then starts the estimation process to obtain the posterior distribution for $a$ and $b$.
 Using a burn-in phase of 1500 samples, a thinning factor of 10, and the default step size of 0.2, she generates 1000 samples from the posterior.
-Annabelle can now extract various numerical values, distributions, and plots from this object.
-To investigate whether the model can predict the different wines, she calculates the posterior probability, assuming a flat prior, that the BAC exceeds $\frac{1}{3}$. The package reports that the   probability that the BAC is less than or equal to $\frac{1}{3}$ is effectively zero, up to machine precision.
+Annabelle can now extract various numerical values and distributions from this object, @fig-svmclassifier shows the corresponding plot.
+To investigate whether the model can predict the different wines, she calculates the posterior probability, assuming a flat prior, that the BAC exceeds $\frac{1}{3}$. She finds that, within the limits of machine precision, the probability that the BAC is less than or equal to $\frac{1}{3}$ is effectively zero.
+
+![Image](plots/Classifier_Comparison.png){#fig-svmclassifier}
 
 She extracts the MAP of the distribution from the IV object, obtaining MAP = 65.46% with a 95% CI of [58.1%, 72,1%].
 To further illustrate the results, Annabelle uses the plot parameter of the distribution function to visualize the BAC.
