@@ -63,7 +63,7 @@ However, for small datasets IV shows a tendency to underestimate the accuracy, s
 
 A preliminary version of this method was implemented in R [@braun_independent_2023; @r_development_core_team._r_2010]. R is a useful tool for statistical computing, with a wide range of statistical libraries and packages. However, R is not explicitly build for machine learning applications, and consequently R isn't widely used in this community. Instead, Mooney [-@kaggle-survey-2022] reports that the by far most common language for machine learning applications is Python [@van_rossum_python_1995]. To make IV commonly available for machine learning community, an implementation in Python is required. In addition, the R implementation of IV does not estimate the asymptotical accuracy in a Bayesian way, which is one of the most important advantages of IV.   
 
-In this article, an implementation of IV in Phython is introduced\footnote{The package can be downloaded at [https://github.com/jonasthedevonoertzen/IV](https://github.com/jonasthedevonoertzen/IV)}. It applies a Bayesian algorithm that can compute the accuracy of the classifier within each class (e.g., the specificity and sensitivity for detecting a depression), on the whole data set, and the Balanced Accuracy (BAC) for a weighted comparison of the class. For each of these accuracies, the posterior distribution can be obtained for the asymptotic accuracy or for every training set size. A small simulation is provided to explain the usage of the package and to demonstrate the results. The article closes by a discussion of the package for the research field. 
+In this article, an implementation of IV in Phython is introduced\footnote{The package can be downloaded at [https://github.com/jonasthedevonoertzen/IV](https://github.com/jonasthedevonoertzen/IV)}. It applies a Bayesian algorithm that can compute the accuracy of the classifier within each class (e.g., the specificity and sensitivity for detecting a depression), on the whole dataset, and the Balanced Accuracy (BAC) for a weighted comparison of the class. For each of these accuracies, the posterior distribution can be obtained for the asymptotic accuracy or for every training set size. A small simulation is provided to explain the usage of the package and to demonstrate the results. The article closes by a discussion of the package for the research field. 
 
 
 # Background and Implementation
@@ -113,7 +113,7 @@ Assuming all three types of wine are indistinguishable with respect to the chemi
 Annabelle’s research hypothesis, in terms of the BAC, is whether the BAC is above $\frac{1}{3}$ for a classifier that asymptotically should be able to detect the difference.
 
 She chooses a Support Vector Machine (SVM) as her classifier, imports the IV package, and initializes the IV object with this classifier and her dataset.
-Then, she selects an initial training set size of five and the default batch size of one since her data set is relatively small.
+Then, she selects an initial training set size of five and the default batch size of one since her dataset is relatively small.
 
 With this setup, she runs the IV process.
 She then starts the estimation process to obtain the posterior distribution for $a$ and $b$.
