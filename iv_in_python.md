@@ -66,7 +66,7 @@ As all of these methods are not suitable for Bayesian estimates and computationa
 
 However, for small data sets IV shows a tendency to underestimated the accuracy, since testing in the first few steps has small training set size. The issue was addressed by Braun, Eckert, and von Oertzen [@braun_independent_2023] by using a estimate of the asymptotic accuracy as the training set size approaches infinity. This utilizes the fact that IV provides correctness of items on differing training set sizes, which allows to estimate the function mapping training set size to the accuracy distribution.
 
-A preliminary version of this method was implemented in R [@braun_independent_2023; @r_development_core_team._r_2010]. R is a useful tool for statistical computing, with a wide range of statistical libraries and packages. However, R is not explicitly build for machine learning applications, and consequently R is widely used in this community. Instead, the by far most common language for machine learning applications is Pyhthon [@kaggle-survey-2022]. To make IV commonly available for machine learning community, an implementation in Python is required. In addition, the R implementation of IV does not estimates the asymptotical accuracy in a Bayesian way, which is one of the most important advantages of IV.   
+A preliminary version of this method was implemented in R [@braun_independent_2023; @r_development_core_team._r_2010]. R is a useful tool for statistical computing, with a wide range of statistical libraries and packages. However, R is not explicitly build for machine learning applications, and consequently R is widely used in this community. Instead, Mooney [-@kaggle-survey-2022] reports that the by far most common language for machine learning applications is Python [@XXX cite Phyton introduction here]. To make IV commonly available for machine learning community, an implementation in Python is required. In addition, the R implementation of IV does not estimates the asymptotical accuracy in a Bayesian way, which is one of the most important advantages of IV.   
 
 In this article, an implementation of IV in Phython is introduced. It applies a Bayesian algorithm that can compute the accuracy of the classifier within each class (e.g., the specificity and sensitivity for detecting a depression), on the whole data set, and the Balanced Accuracy (BAC) for a weighted comparison of the class. For each of these accuracies, the posterior distribution can be obtained for the asymptotic accuarcy or for every training set size. A small simulation is provided to explain the usage of the package and to demonstrate the results. The article closes by a discussion of the package for the research field. 
 
@@ -74,10 +74,14 @@ ___
 
 # Background and Implementation
 
-To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a batch of points and records the result and then adds this batch to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
+## IV Process
+To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a batch of points and records the result and then adds this batch to the trainset. The classifier is then trained on the new trainset and this process is repeated until the full dataset is used. 
 
-In IV, the classifier is trained on the initial training set and then predicts a single sample or a batch of samples. The number of correct classifications in this batch is stored for each class along with the training set size. The batch size is set to one by default. Again, with larger data sets it is advised to increase that number since information gain is then minimal, and otherwise the procedure is too time consuming. 
+In theory, the initial size for the training set can be zero. The classifier then starts by guessing the class of the first sample before adding them to the training set. However, in practice the training set is typically initialized with a number of initial samples, since no information can be gained from the first classifications, but noise is nevertheless added. In addition, some classifiers require a certain minimum amount of samples to operate; for example, a $k$-Nearest-Neighbor classifier needs at least $k$ elements in the training set. In the current implementation, the default value for the initial size of the training set is two. For larger data sets, it is recommended to increase this size to ten or beyond. 
 
+In IV, the classifier is trained on the initial training set and then predicts a single sample or a batch of samples. The number of correct classifications in this batch is stored for each class along with the training set size. The batch size is set to one by default. With larger data sets it is advised to increase that number, as information loss is minimal for using batches, while computational costs can be reduced significantly.
+
+## Mathematical Model for the Likelihood
 The probability that a sample is classified correctly increases with as the training set size increases. Braun, Eckert and von Oertzen [-@braun_independent_2023] showed that the accuracy within each class can be approximated by:
 
 $$
@@ -85,16 +89,17 @@ P(\text{outcome} = 1) = a - \frac{b}{n}
 $$ {#eq-likelihood}
 
 Where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that  controls the reduction from the asymptote for finite training sample size \( n \).
-Both parameters depend on the classifier. They can be estimated by a Bayesian parameter estimation. 
-We use a uniform prior between 0 and 1 for $a$ and a flat prior on the positive numbers for $b$. 
+Both parameters depend on the classifier and can be estimated by a Bayesian parameter estimation. 
+A uniform prior between 0 and 1 is used for $a$, and a flat prior on the positive numbers for $b$. 
 The likelihood for a correct classification at any value of $(a,b)$ is then given by Equation (@eq-likelihood), and one minus that for a failed classification. 
-The likelihood of the complete set of classification results (containing the training sample size $n$ and whether the classification was correct) is then given by the product of the likelihoods for each classification result.   
+The likelihood of the complete set of classification results (containing the training sample size $n$ and whether the classification was correct) is the product of the likelihoods for each classification result.   
 
-In the current study, the log likelihood is used to avoid numerical problems. With that, a Monte Carlo Markov Chain [@metropolis1953equation] is applied to sample from the posterior distribution of $a$ and $b$. The MCMC used in this implementation is a Metropolis Hastings algorithm, since it is computationally more efficient and more robust [@hastings1970monte]. 
-The MCMC can be started with different burn-in size (default 100), thinning (default XXX), target number of samples (default XXX), and step size for the next candidate choice (default $XXX$ in both directions). Larger burn-in sizes, number of samples and thinning will improve the sample quality, but at the cost of higher running time. However, since the MCMC operates on the classification results that will not be recomputed, the computational costs are limited even with high number of total samples. 
+## Monte Carlo Markov Chains
+In the current study, the log likelihood is used to avoid numerical problems. With that, a Monte Carlo Markov Chain (MCMC; [@metropolis1953equation]) is applied to sample from the posterior distribution of $a$ and $b$. The MCMC used in this implementation is a Metropolis Hastings algorithm, since it is computationally more efficient and more robust [@hastings1970monte]. The MCMC can be started with different burn-in size (default 100), thinning (default XXX), target number of samples (default XXX), and step size for the next candidate choice (default $XXX$ in both directions). Larger burn-in sizes, number of samples and thinning will improve the sample quality, but at the cost of higher running time. However, since the MCMC operates on the classification results that will not be recomputed, the computational costs are limited even with high number of total samples. 
 
-The MCMC is done separately for the accuracy of each class. 
-For each class, it provides a distribution of $a$ and $b$, where  $a$ represent the asymptotical accuracy in that class, i.e., the accuracy the classifier would reach for an infinite amount of training data. 
+The MCMC is done separately for each class to obtain the posterior distribution for $a$ and $b$, where  $a$ represent the asymptotical accuracy in that class, i.e., the accuracy the classifier would reach for an infinite amount of training data. 
+
+## Output Formats
 The user of the package can access the distribution of $a$  for each class directly as a list of samples, but they can also request specific information like the MAP accuracy in that class, the posterior mean, the standard deviation, the probability to exceed a certain threshold (that is, the cumulative distribution function), or the probability that the asymptotic accuracy exceeds the asymptotic accuracy of a second distribution (e.g., a different classifier that the user wishes to compare against). 
 In addition to the accuracy for each class, the package provides the accuracy and the BAC for the whole dataset, as well as any other weighting of the class accuracies. 
 These metrics are a weighted um of the individual class accuracies. in the balanced accuracy, all classes are weighted equally, which provides an accuracy index which is independent of the class sizes in the data set. 
@@ -103,62 +108,6 @@ The combination of class accuracies are computed by first multiplying the random
 The package also combines the posteriors of $a$ and $b$ to provide a distribution of the expected accuracy for any finite sample size. 
 As for the asymptotic accuracy, the class accuracies for all classes can be accessed as well as the total accuracy, balanced accuracy, or any other weighting of class accuracies. 
 Using the same methods as above, again the MAP, mean, standard deviation, or any cumulative probability of the probability distributions are provided by the package. 
-
-## predicting samples
-
-The startsize for the trainset can theoretically be zero, in this case the classifier starts by guessing the first sample. 
-Then it would train on the very small trainset of a single sample and logically choose the same label for the second sample. 
-In Practice it is not useful to start with a startset size of 0 for multiple reasons. 
-The information gained on the first sample is zero and on the second sample only an information about the amounts of the different labels. 
-This is because the chance to classify the first sample correctly is 1/amount of labels and the probability to predict the second is the probability for both samples to have the same label. 
-Therefore the information whether the first two samples are predicted correctly or not is not dependent on the realtion between features and labels and therefore not that interesting. 
-
-Another reason why starting with a trainset size of zero is the practical problem that some classifiers need a certain minimum amount of samples to work. 
-An example is the K-nearest Neighbor classifier that predicts a new sample by taking a majority voting of the k nearest neighbors. 
-Logically a trainset would have to have at least k samples (and if it had exactly k samples a new sample would have exactly these k samples as nearest neighbors, so the classification would be independent of the features of the new sample). 
-<!-- Also the formular doesn't work for n=0 wegen zero division. -->
-In this implementation the default value for the startsize of the trainset is 2, this is also a good value for most cases, if data is plenty, increasing the start trainset size to 10 makes sense, as early values are often less stable. 
-
-As a first step in IV the classifier is trained on the starting trainset being a subset of the full datset. Then this classifier predicts a batch of samples. 
-For each sample in that batch it is recorded whether that sample was classified correctly and on which trainset size the classifier was currently trained (which would be the same value for all samples of the same batch). 
-Then this batch is added to the trainset and the classifier is retrained. 
-Therfore the classifier gets retrained batch size / dataset size - trainset start size times. 
-For a small batch size and a big dataset this can be computationally intensive. 
-For big datasets a batch size of about a fifth of the dataset size works fine. 
-For small datasets the default and minimum value of 1 leads to the best estimation of the asymptotical accuracy, though the difference is minimal. 
-A batch size higher than a third of the dataset is not recommended.
-
-## computing posterior
-
-The accuracy with which a sample is classified correctly increases with the increasing training set. Braun, Eckert and von Oertzen [@braun_independent_2023] found that the accuracy in dependence of the trainset size can be modeled witht his equation (@eq-asymptote):
-
-$$
-p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
-$$ {#eq-asymptote}
-
-Where the *asymptote* represents the classifier’s theoretical accuracy as \( n \to \infty \), and the *offset factor* controls the decline from the asymptote for finite \( n \).
-Both are parameters dependend on the dataset and classifier and can be estimated with bayesian parameter estimation. The Prior for the bayesian estimation is uniform between 0 and 1 for the asymptote and uniform positive for the offset factor. Then the likelihood for any possible combination of asymptote and offset_factor can be computed by using the above formular for every prediction recorded in the prior step. For a successfully predicted sample the likelihood for asymptote and offset_factor is defined by the equation (@eq-likelihood2):
-
-$$
-\text{Likelihood} = p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
-$$ {#eq-likelihood2}
-
-and for an unsuccessfully predicted sample it is 1 minus that. Therefore the full likelihood formular (@eq-likelihood3) comes out to be:
-
-$$
-\text{Likelihood} = outcome*p_n(outcome=1) + (1 - outcome) * (1 - p_n(outcome=1))
-$$ {#eq-likelihood3}
-
-Multiplying this for every recorded prediction gives the likelihood for the pair of asymptote and likelihood. 
-Practically in the implementation instead the logarithm for each is taken and then these are summed up to be the logarithmic likelihood. This improves numerical stability and speeds up the process.
-
-Prior times likelihood gives a distribution that looks like the posterior distribution but has an area that is not equal to one. To get the actual posterior distribution one could compute the integral of this distribution and divide by it. This would normalize the area to one. An alternative option is to use a marcov chain monte carlo (MCMC) which makes it possible to sample from the actual posterior distribution based on the prior and likelihood. The MCMC implemented in this paper uses the metropolis hastings algorithm. This has the advantage of being computationally more efficient and more robust. Also having the posterior distribution as a set of samples allows for manipulations that would require the extra step of sampling if the numerical variant was used instead of MCMC. MCMC takes some parameters that can be specified when called.
-
-## Output
-
-This whole process of computing the posterior is done seperately for each class. For each class the distribution of the asymptote parameter can be returned. This represents the asymptotical accuracy that the classfier would reach for an infinite amount of data. In addition to the accuracy for each class also the accuracy for the whole dataset can be generated. In this case a distinction needs to be made between the accuracy and the balanced accuracy. For the normal accuracy the classes are (usually implicitly) weighted by their frequency in the dataset. The balanced accuracy weights the classes all equally independent from their frequency. Either way all weights add up to one. Both, balanced and normal accuracy are achieved by first multiplying the random variable for each class with its weight. Then the new distributions are convolved giving the final distribution for balanced or normal accuracy.
-
-Alternatively to using the asymptotical accuracy, it is also possible to obtain a posterior distribution for any trainingset size. For a trainingset size n this is acheived by going through the samples of asymptote and offset factor of the posterior distribution and computing p_n for each. This gives then many samples for p_n making together the posterior distribution. Doing this for each label gives multiple accuracy distributions that can be combined the same way as in the asymptotical case to achieve normal or balanced global accuracy. 
 
 # Illustrative Example
 
