@@ -79,10 +79,12 @@ After being trained on the current training set, the classifier predicts the nex
 
 ## Mathematical Model for the Likelihood
 In the next step, the recorded training set sizes and corresponding correctness data are used to estimate the parameters of the function that maps training set size to correctness probability. Braun, Eckert and von Oertzen [-@braun_independent_2023] showed that the accuracy within each class can be approximated by:
+
 $$
 P(\text{outcome} = 1) = a - \frac{b}{n}
 $$ {#eq-likelihood}
-where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that determines the deviation from this asymptote for finite training sample size $n$.
+
+where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as $(n \to \infty)$, and $b$ is an offset factor that determines the deviation from this asymptote for finite training sample size $n$.
 
 The likelihood for a correct classification at any value of $(a,b)$ is given by [@eq-likelihood], while the likelihood of a misclassification is one minus this value. The overall likelihood of the complete set of classification results is the product of the likelihoods for each classification result. To prevent numerical issues, the current implementation uses the log likelihood. 
 
