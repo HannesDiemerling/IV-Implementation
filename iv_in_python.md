@@ -144,7 +144,7 @@ Annabelle has already found a model that can distinguish between the wines, but 
 She creates three more IV objects using the classifiers $k$-Nearest Neighbor (kNN), Random Forest (RF), and Logistic Regression (LR).
 She then runs the IV and computes the posterior for each.
 To compare the different classifiers, she decides to evaluate them based on their BAC distributions, with higher values being better.
-Figure @fig-comparison shows the plotted distributions.
+@fig-comparison shows the plotted distributions.
 As can be seen, the SVM and the kNN perform noticeably worse than the LR and the RF.
 The RF shows the best performance with a MAP of 95.64%, which is nearly perfect for our data.
 The LR has a MAP of 93.53% and thus a very similar. Annabelle therefore is curious with what probability the RF outperforms the LR.
