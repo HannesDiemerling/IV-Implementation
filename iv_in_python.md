@@ -82,9 +82,9 @@ In the next step, the recorded training set sizes and corresponding correctness 
 $$
 P(\text{outcome} = 1) = a - \frac{b}{n}
 $$ {#eq-likelihood}
-where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that determines the deviation from this asymptote for finite training sample size \( n \).
+where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that determines the deviation from this asymptote for finite training sample size $n$.
 
-The likelihood for a correct classification at any value of $(a,b)$ is given by Equation (@eq-likelihood), while the likelihood of a misclassification is one minus this value. The overall likelihood of the complete set of classification results is the product of the likelihoods for each classification result. To prevent numerical issues, the current implementation uses the log likelihood. 
+The likelihood for a correct classification at any value of $(a,b)$ is given by [@eq-likelihood], while the likelihood of a misclassification is one minus this value. The overall likelihood of the complete set of classification results is the product of the likelihoods for each classification result. To prevent numerical issues, the current implementation uses the log likelihood. 
 
 ## Monte Carlo Markov Chains
 A Monte Carlo Markov Chain (MCMC; [@metropolis1953equation]) is then used to sample from the posterior distribution of $a$ and $b$. A uniform prior between 0 and 1 is used for $a$, and a flat prior on the positive numbers for $b$. The MCMC implemented here is a Metropolis Hastings algorithm, chosen for its computationally  efficiency and robustness [@hastings1970monte]. 
@@ -96,7 +96,7 @@ The MCMC is performed separately for each class to obtain the posterior distribu
 ## Output of the Analysis
 The user of the package can access the distribution of $a$ for each class directly as a list of samples. Additionally, they can request specific metrics, such as the MAP accuracy for that class, the posterior mean, the standard deviation, the probability of exceeding a certain threshold (i.e., the cumulative distribution function), or the probability that the asymptotic accuracy exceeds the asymptotic accuracy of a second distribution (e.g., a different classifier that the user wishes to compare against).
 
-In addition to the within-class accuracy , the package provides the accuracy and BAC for the entire dataset, as well as any other weighted combination of class accuracies. These metrics are computed as a weighted sum of the individual class accuracies. in the case of the BAC, all classes are weighted equally, yielding an accuracy index that is independent of the class sizes in the dataset.
+In addition to the within-class accuracy, the package provides the accuracy and BAC for the entire dataset, as well as any other weighted combination of class accuracies. These metrics are computed as a weighted sum of the individual class accuracies. In the case of the BAC, all classes are weighted equally, yielding an accuracy index that is independent of the class sizes in the dataset.
 
 The combined class accuracies are computed by first multiplying the random variable for each class by its corresponding weight, then convolving the distributions to obtain the distribution for the weighted sum.
 
@@ -106,8 +106,7 @@ The package also combines the posteriors of $a$ and $b$ to provide a distributio
 
 ## Is There a Group Difference?
 
-Assume a researcher, let’s call her Annabelle, wants to find out if there is a difference between three types of wine called Barolo, Lugana, and Primitivo.
-\footnote{The different types of wine could represent different treatment groups in a psychological experiment, different gender identities in a social science study, or different conditions in a neurological study.}
+Assume a researcher, let’s call her Annabelle, wants to find out if there is a difference between three types of wine called Barolo, Lugana, and Primitivo\footnote{The different types of wine could represent different treatment groups in a psychological experiment, different gender identities in a social science study, or different conditions in a neurological study.}.
 
 Her dataset consists of the chemical features for 59 different Barolo, 71 Lugana, and 48 Primitivo wines.
 \footnote{The dataset for this example is available at [archive.ics.uci.edu](https://archive.ics.uci.edu/dataset/109/wine) [@aeberhard1994comparative]. The Python code for the examples presented here can be found at [https://github.com/HannesDiemerling/IV-Implementation/tree/main](https://github.com/HannesDiemerling/IV-Implementation/tree/main)}
