@@ -110,7 +110,71 @@ The package also combines the posteriors of $a$ and $b$ to provide a distributio
 
 # Illustrative Example
 
-<!-- Text von Hannes und Thede -->
+## Is there a group difference
+
+Assume a researcher, let’s call her Annabelle, wants to find out if there is a difference between three types of wine called Barolo, Lugana, and Primitivo.
+\footnote{The different types of wine could represent different treatment groups in a psychological experiment, different gender identities in a social science study, or different conditions in a neurological study.}
+Her data set consists of the chemical features for 59 different Barolo, 71 Lugana, and 48 Primitivo wines.
+\footnote{The data set for this example is available at [archive.ics.uci.edu](https://archive.ics.uci.edu/dataset/109/wine) [@aeberhard1994comparative].}
+Assuming all three types of wine are indistinguishable with respect to the chemical features under investigation, no classifier would be able to perform better than guessing, which corresponds to a BAC of $\frac{1}{3}$.
+Annabelle’s research hypothesis, in terms of the BAC, is whether the BAC is above $\frac{1}{3}$ for a classifier that asymptotically should be able to detect the difference.
+
+She chooses a Support Vector Machine (SVM) as her classifier, imports the IV package, and initializes the IV object with this classifier and her data set.
+She selects an initial training set size of five and the default batch size of one since her data set is relatively small.
+With this setup, she runs the IV process.
+She then starts the estimation process, which provides a posterior distribution for $a$ and $b$.
+Using a burn-in phase of 1500 samples, a thinning factor of 10, and the default step size of 0.2, she generates 1000 samples from the posterior.
+Annabelle can now extract various numerical values, distributions, and plots from this object.
+To investigate whether the model can predict the different wines, she calculates the posterior probability, assuming a flat prior, that the BAC exceeds $\frac{1}{3}$.
+She extracts the MAP of the distribution from the IV object, obtaining 65.46% with a 95% CI of [0.581, 0.721].
+To further illustrate the results, Annabelle uses the plot parameter of the distribution function to visualize the BAC.
+As she has already calculated the distribution, the function immediately generates the plot, allowing her to visually inspect the MAP and the CI.
+The lower bound of the CI is at 58.1%, which indicates that $\frac{1}{3}$ is not within the credible interval, making it clear that the model predicts better than chance.
+Specifically, the probability that the BAC is less than or equal to $\frac{1}{3}$ is effectively zero, up to machine precision.
+Based on these findings, she concludes that there are identifiable differences among the types of wine and that the model is capable of distinguishing between them.
+
+She is now interested in determining whether her two wines, Barolo and Lugana, differ substantially in their chemical composition.
+To investigate this, she selects a subset of her dataset containing only these two wines.
+She then creates a new IV object and runs the compute posterior method using the same default parameters as before.
+Annabelle continues using the SVM as a binary classifier to distinguish between Barolo and Lugana.
+She evaluates the performance of this classifier by measuring its sensitivity and specificity.
+To do this, she accesses them in the IV class by specifying the label.
+The sensitivity, which reflects how well the model identifies Barolo wines, is 76.92%, while the specificity, indicating how accurately Lugana wines are classified, is 98.07%.
+These results suggest that although the classifier performs well overall, its ability to distinguish Barolo is lower than its ability to identify Lugana.
+Encouraged by these insights, Annabelle now turns her attention to a broader question: could another classifier perform even better?
+
+### Which classifier is best?
+
+Annabelle has already found a model that can distinguish between the wines, but she is not satisfied and wants to know if there is a better model available.
+She creates three more IV objects using the classifiers k-Nearest Neighbor (kNN), Random Forest (RF), and Logistic Regression (LR).
+She then runs the IV and computes the posterior for each.
+To compare the different classifiers, she decides to evaluate them based on their BAC distributions, with higher values being better.
+Figure @fig-comparison shows the plotted distributions.
+It is visible that the SVM and the kNN perform noticeably worse than the LR and the RF.
+The RF shows the best performance with a MAP of 95.64%, making it nearly perfect for our data.
+The LR has a MAP of 93.53% and is very similar, so she asks herself what is the probability that the RF outperforms the LR.
+Fortunately, a greater-than service function tests this, resulting in a probability of 77.59% that the RF outperforms the LR.
+Annabelle is amazed by this and changes her model to the RF, now having a model that ensures she can determine the wine based on its chemical ingredients.
+
+![Image](plots/Classifier_Comparison.png){#fig-comparison}
+
+A friend of Annabelle wants to create a tool that can predict the type of wine based on its chemical ingredients.
+He is paid per correctly classified wine, so he is not interested in the BAC but in the global accuracy, which is the percentage of wines correctly classified.
+Annabelle now wants to plot the ACC distributions of her classifiers to find the best option for her friend.
+Figure @fig-ACCcomparison shows the plot, and again the RF performs best with a MAP of 98.58% while the probability that it outperforms the LR is 98.38%.
+Therefore, she clearly recommends the RF to her friend.
+
+![Image](plots/ACC_Classifier_Comparison.png){#fig-ACCcomparison}
+
+However, Annabelle’s friend still has more tasks for her.
+He wants to use as few wines as possible for training the RF to reduce costs.
+He asks Annabelle if she can advise him on this.
+She investigates the impact of an increasing training set size on accuracy by examining the development of the ACC with respect to the training size.
+She creates an IV object and generates a plot showing the mean as well as the first and third quartiles for every training set size from 1 to 100, which is the default value.
+This results in Figure @fig-development, which she sends to her friend.
+He looks at the plot and determines that the first 20 samples are the most impactful, so he will purchase only 20 samples to save money.
+
+![Image](plots/Plot_Development.png){#fig-development}
 
 # Discussion
 IV is a method for evaluating classifier accuracy based on known data likelihood. Existing implementations are limited to R and are not widely available as packages (e.g., on CRAN; [@braun_independent_2023]). This article introduces a Python package, integrated with the scikit-learn library, which is currently the most widely used programming language in machine learning. The package employs a Metropolis-Hastings MCMC algorithm to estimate the posterior probability of classifier accuracy within each class and aggregates these estimates into multiple relevant metrics and distributions. An empirical example using the Wine dataset [@aeberhard1994comparative] demonstrates the package’s functionality and output. The package code and the examples presented in this paper are available on Github.
