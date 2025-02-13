@@ -13,7 +13,7 @@ author:
     affiliations:
       - name: "Thomas Bayes Institute, Berlin"
 
-abstract: "To statistically test whether two groups are different or whether two models differ, the accuracy of classifiers can be estimated and compared statistically. However, the distribution of common accuracy estimates like cross validation (CV) is unknown and depends on the classifier used, which makes it inapplicable for statistical inference. Independent validation (IV) has been suggested as an alternative, as the distribution of the IV estimate is always a binomial distribution, allowing both for conventional tests on the accuracy and the Bayesian analysis of classifier performance. Although Python is the most frequently used tool for machine learning methods, so far an implementation of IV in Python is missing. This article introduces a new Python package that implements IV. In addition to the core IV algorithm, the package includes the option to (1) plot the accuracy in dependence of the training set size, (2) to estimate the asymptotical classifier accuracy including its posterior distribution, and (3) to query the posterior distribution for confidence intervals. The package also allows to compare different accuracy posterior distributions of each class of the dataset, different classifiers on the same dataset, or of a single classifier on different datasets. An introduction is provided how to use the package for some examples, and a short simulation that shows how the package works in practice. Using this new Python package will allow empirical scientists to easily use IV in their research, for example to analyze group differences or compare group differences between different data sets. "
+abstract: "To statistically test whether two groups are different or whether two models differ, the accuracy of classifiers can be estimated and compared statistically. However, the distribution of common accuracy estimates like Cross Validation (CV) is unknown and depends on the classifier used, which makes it inapplicable for statistical inference. Independent Validation (IV) has been suggested as an alternative, as the distribution of the IV estimate is always a binomial distribution, allowing both for conventional tests on the accuracy and the Bayesian analysis of classifier performance. Although Python is the most frequently used tool for machine learning methods, so far an implementation of IV in Python is missing. This article introduces a new Python package that implements IV. In addition to the core IV algorithm, the package includes the option to (1) plot the accuracy in dependence of the training set size, (2) to estimate the asymptotical classifier accuracy including its posterior distribution, and (3) to query the posterior distribution for confidence intervals. The package also allows to compare different accuracy posterior distributions of each class of the dataset, different classifiers on the same dataset, or of a single classifier on different datasets. An introduction is provided how to use the package for some examples, and a short simulation that shows how the package works in practice. Using this new Python package will allow empirical scientists to easily use IV in their research, for example to analyze group differences or compare group differences between different data sets. "
 bibliography: bibliography.bib
 keywords: [APA Paper, Machine Learning, Classification, Validation, Independent Validation, Cross Validation, Accuracy, Python, Implementation]
 floatsintext: true
@@ -42,23 +42,23 @@ Groups comparisons by classifier is done by training the classifier on the data 
 If the groups are identical, the classifier will be unable to classify better than by guessing. 
 Therefore, if the classifier predicts better than guessing, it can be concluded that there is a group difference.
 This procedure makes it necessary to estiamted a classifier's prediction accuracy.
-That can be achieved in various ways; typical examples include a train-test split, cross-validation, or bootstrap [@kohavi_study_1995].
+That can be achieved in various ways; typical examples include a train-test split, Cross Validation (CV), or bootstrap [@kohavi_study_1995].
 
 Train-test split works by splitting the data into a train set and a test set. 
 The training set is used to train the classifier, which then predicts the elements of the test set [@kohavi_study_1995].
 The accuracy is then the number of correct classifications over the total number of classifications, which is binomially distributed and hence allows for all kinds of statistical tests. For instance, a binomial test against a null hypothesis of a guessing classifier can be used to determine if the groups differ significantly in a frequentistic analysis.
 However, since the amount of data is limited [@sahiner_classifier_2008], splitting the data reduces the size of both the training set, giving less learning opportunities for the classifier, and the test set, adding more standard error in the binomial test. 
 In consequence, this leads to a decline in the accuracy of the model [@santafe_dealing_2015] and a less precise estimate of the accuracy. This also limits the statistical power, which is undesirable [@rossi_statistical_2013].
-Consequently, the train-test split is an uncommon method; usually, variants of cross validation (CV) is used instead [@kohavi_study_1995; @devroye_distribution-free_1979; @geisser_predictive_1975; @stone_cross-validatory_1974].
+Consequently, the train-test split is an uncommon method; usually, variants of CV are used instead [@kohavi_study_1995; @devroye_distribution-free_1979; @geisser_predictive_1975; @stone_cross-validatory_1974].
 
-In the process of cross-validation, the dataset is split into $k$ subsets called "folds." Then, a procedure analogous to the train-test split is repeated for each fold, in which the classifier is trained on $k-1$ folds and subsequently predicts the items of the remaining fold. In total, every element is tested, so that the testset size equals the size of the full dataset, and the size of the training set is $\frac{k-1}{k}$ times the size of the full dataset. This approach addresses the problem posed by the reduced dataset sizes, thereby eliminating the diminished statistical power inherent to the train-test split method. As the value of $k$ increases, the training set size concomitantly increaes. In the particular case where $k$ is equal to the dataset size, this method is referred to as Leave-One-Out (LOO) [@misc{hastie2009elements], maximizing training- and testset size. 
+In the process of CV, the dataset is split into $k$ subsets called "folds." Then, a procedure analogous to the train-test split is repeated for each fold, in which the classifier is trained on $k-1$ folds and subsequently predicts the items of the remaining fold. In total, every element is tested, so that the testset size equals the size of the full dataset, and the size of the training set is $\frac{k-1}{k}$ times the size of the full dataset. This approach addresses the problem posed by the reduced dataset sizes, thereby eliminating the diminished statistical power inherent to the train-test split method. As the value of $k$ increases, the training set size concomitantly increaes. In the particular case where $k$ is equal to the dataset size, this method is referred to as Leave-One-Out (LOO) [@misc{hastie2009elements], maximizing training- and testset size. 
 
 It is often believed that the accuracy of CV predictions also follows a binomial distribution [@salzberg_comparing_1997].
 However, this is incorrect due to the dependency inherent in the repeated training and testing procedure, which results in an increased variance, as conjectured by Bouckaert [-@bouckaert_choosing_2003] and proven by Kim & von Oertzen [-@independent_validation].
 This results in alpha inflation of frequentistic tests, as has already been observed by Dietterich [@dietterich_approximate_1998]. It also makes Bayesian estimation of the accuracy impossible. This effect should not be confused with the alpha inflation caused by actual dependency between the samples of the data set themselves [@kohavi_study_1995]. The alpha inflation in this case is caused by the repeated training and testing progress, which creates dependencies of the probabilities that samples are classified correctly, even if the data samples themselves are independent.
 The accuracy distribution of CV is an unknown distribution that depends on the choice of classifier.
 
-One approach to conducting a hypothesis test against the null hypothesis of no difference between the groups is to utilize permutation tests [@pesarin_permutation_2010]. Permutation tests repeatedly estimate the cross validation accuracy on the dataset while shuffling the group labels. This allows to approximate the distribution of the accuracy under the assumption of no difference between the groups. Comparing the CV accuracy with the original labels to this distribution allows to generate a significance test against the null hypothesis of no group difference. However, permutation tests are computationally expensive, as they have to repeat the CV procedure multiple times. In addition, they can only be used for frequentistic tests against the null hypothesis of no group differences, not for any other significance test (e.g., whether one classifier outperforms another) or any Bayesian analysis. 
+One approach to conducting a hypothesis test against the null hypothesis of no difference between the groups is to utilize permutation tests [@pesarin_permutation_2010]. Permutation tests repeatedly estimate the CV accuracy on the dataset while shuffling the group labels. This allows to approximate the distribution of the accuracy under the assumption of no difference between the groups. Comparing the CV accuracy with the original labels to this distribution allows to generate a significance test against the null hypothesis of no group difference. However, permutation tests are computationally expensive, as they have to repeat the CV procedure multiple times. In addition, they can only be used for frequentistic tests against the null hypothesis of no group differences, not for any other significance test (e.g., whether one classifier outperforms another) or any Bayesian analysis. 
 
 An alternative is to repeatedly sample a training set by bootstrapping and then testing those samples that have not been sampled in the bootstrap [@kohavi_study_1995]. This emulates a Bayesian approach, as it generates a distribution around the point estimate on training set sizes identical to the full data set size. However, the method introduces a dependency between the training test data samples, as some of those are repeated, which compromises the resulting distribution. In general, the distribution is not the posterior distribution, so that it cannot correctly be used for freuqentistic or Bayesian testing. 
 
@@ -72,7 +72,7 @@ In this article, an implementation of IV in Phython is introduced. It applies a 
 
 ___
 
-# IV Background and Package Implementation
+# Background and Implementation
 
 To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a point (XXX Batch) and records the result and then adds this point to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
 
@@ -117,7 +117,7 @@ Therefore the information whether the first two samples are predicted correctly 
 
 Another reason why starting with a trainset size of zero is the practical problem that some classifiers need a certain minimum amount of samples to work. 
 An example is the K-nearest Neighbor classifier that predicts a new sample by taking a majority voting of the k nearest neighbors. 
-Logically a trainset would have to have at least k samples (and if it had exactly k samples a new sample would have exactly these k samples as nearest neighbors, so the classification would be independent from the features of the new sample). 
+Logically a trainset would have to have at least k samples (and if it had exactly k samples a new sample would have exactly these k samples as nearest neighbors, so the classification would be independent of the features of the new sample). 
 <!-- Also the formular doesn't work for n=0 wegen zero division. -->
 In this implementation the default value for the startsize of the trainset is 2, this is also a good value for most cases, if data is plenty, increasing the start trainset size to 10 makes sense, as early values are often less stable. 
 
@@ -162,26 +162,14 @@ This whole process of computing the posterior is done seperately for each class.
 
 Alternatively to using the asymptotical accuracy, it is also possible to obtain a posterior distribution for any trainingset size. For a trainingset size n this is acheived by going through the samples of asymptote and offset factor of the posterior distribution and computing p_n for each. This gives then many samples for p_n making together the posterior distribution. Doing this for each label gives multiple accuracy distributions that can be combined the same way as in the asymptotical case to achieve normal or balanced global accuracy. 
 
-## XXX
+# Illustrative Example
 
-### Is there a group difference
-Assume somebody, lets call her Annabelle, want to find out if there is a difference between two groups. Annabelle employs a Support Vector Machine (SVM) classifier along with the IV to estimate its accuracy. Her research question is: What is the probability that the classifier’s asymptotic accuracy—meaning the accuracy it would achieve with an infinite amount of data—is at least as high as that of random guessing? In a balanced dataset, random guessing corresponds to an accuracy of 50%. 
-
-As Annabelle is interested in finding if there is a group difference at all, she examines the classifier's asymptotic accuracy using IV, yielding the distribution of the overall accuracy. In a balanced dataset, this measure is equivalent to balanced accuracy. If the cumulative probability of achieving an accuracy below 50% is less than her chosen significance level, she can reject the null hypothesis that no group difference exists.
-
-### Comparing classifers
-Lets say Annabelle found that there is a strong difference between the groups. Now she wants to build a classifier for inference but she is unsure what kind of classifer she should use. 
-Her final choice will be trained on a dataset of 25 samples, this is the trainset size for which she wants to optimize the accuracy. Annabelle runs iv with multiple classifers like K-Nearest Neighbor, Random Forest and Linear Regression. As an output she generates the distribution for the global accuracy for a trainset size of 25. For the SVM she does not need to rerun the IV but can simply compute the distribution for global accuracy of 25. Now she has 4 different distributions for the accuracy and can see not only which has the highest MAP or mean but also how much the areas overlap giving her the information that most of these classifers are very similarly good. 
-
-### Development
-Annabelle considers getting more than 25 samples for her final classifier, but getting that data would be expensive. So before she does that, she looks at how much better the classifier would get if she had some more samples. She is also unsure on how many more samples she should get. So she looks wants to look at the development of how the balanced accuracy increases over increasing training set size. With IV she can get the balanced accuracy for every n from 1 to 100 and look at when it is good enough to satisfy her. In this implementation this proccess is directly accessable as a service. The result is a list of means (XXX or MAP's?) and some range around them that can be specified in differnt ways (XXX: Elaborate on different ways?). 
-
-# Results
+<!-- Text by Thede and Hannes -->
 
 # Discussion
 IV is a method for evaluating classifier accuracy based on known data likelihood. Existing implementations are limited to R and are not widely available as packages (e.g., on CRAN; @XXX). This article introduces a Python package, integrated with the scikit-learn library, which is currently the most widely used programming language in machine learning. The package employs a Metropolis-Hastings MCMC algorithm to estimate the posterior probability of classifier accuracy within each class and aggregates these estimates into multiple relevant metrics and distributions. An empirical example using the XXX dataset demonstrates the package’s functionality and output. The package code and examples presented here are available at XXX. 
 
-To the best of the authors’ knowledge, no other implementation exists that computes the Bayesian posterior of a classifier’s asymptotic within-class accuracy. Existing methods that approximate at least frequentist baseline distributions for a purely guessing classifier have significant drawbacks: some are computationally expensive (e.g., permutation tests), other reduce available data (e.g., training-testset-separation), and some do not work correctly to begin with (e.g., cross validation using a binomial null distribution). Moreover, none of these methods allow a comparisons beyond anything but chance performance or support a Bayesian approach. 
+To the best of the authors’ knowledge, no other implementation exists that computes the Bayesian posterior of a classifier’s asymptotic within-class accuracy. Existing methods that approximate at least frequentist baseline distributions for a purely guessing classifier have significant drawbacks: some are computationally expensive (e.g., permutation tests), other reduce available data (e.g., training-testset-separation), and some do not work correctly to begin with (e.g., CV using a binomial null distribution). Moreover, none of these methods allow a comparisons beyond anything but chance performance or support a Bayesian approach. 
 
 The Bayesian distributions of the asymptotic within-class accuracy serve as the foundation for computing the posterior of key indices describing classifier performance. They also enable Bayesian inference on empirical hypotheses, such as whether two groups differ or one classifier outperforms another. 
 
@@ -216,6 +204,21 @@ Independent validation is the preferred method for optimizing statistically accu
 
 
 <!-- EVERYTHING STARTING HERE IS UNNECESSARY PARTS FROM PREVIOUS VERSIONS -->
+
+## XXX
+
+### Is there a group difference
+Assume somebody, lets call her Annabelle, want to find out if there is a difference between two groups. Annabelle employs a Support Vector Machine (SVM) classifier along with the IV to estimate its accuracy. Her research question is: What is the probability that the classifier’s asymptotic accuracy—meaning the accuracy it would achieve with an infinite amount of data—is at least as high as that of random guessing? In a balanced dataset, random guessing corresponds to an accuracy of 50%. 
+
+As Annabelle is interested in finding if there is a group difference at all, she examines the classifier's asymptotic accuracy using IV, yielding the distribution of the overall accuracy. In a balanced dataset, this measure is equivalent to balanced accuracy. If the cumulative probability of achieving an accuracy below 50% is less than her chosen significance level, she can reject the null hypothesis that no group difference exists.
+
+### Comparing classifers
+Lets say Annabelle found that there is a strong difference between the groups. Now she wants to build a classifier for inference but she is unsure what kind of classifer she should use. 
+Her final choice will be trained on a dataset of 25 samples, this is the trainset size for which she wants to optimize the accuracy. Annabelle runs iv with multiple classifers like K-Nearest Neighbor, Random Forest and Linear Regression. As an output she generates the distribution for the global accuracy for a trainset size of 25. For the SVM she does not need to rerun the IV but can simply compute the distribution for global accuracy of 25. Now she has 4 different distributions for the accuracy and can see not only which has the highest MAP or mean but also how much the areas overlap giving her the information that most of these classifers are very similarly good. 
+
+### Development
+Annabelle considers getting more than 25 samples for her final classifier, but getting that data would be expensive. So before she does that, she looks at how much better the classifier would get if she had some more samples. She is also unsure on how many more samples she should get. So she looks wants to look at the development of how the balanced accuracy increases over increasing training set size. With IV she can get the balanced accuracy for every n from 1 to 100 and look at when it is good enough to satisfy her. In this implementation this proccess is directly accessable as a service. The result is a list of means (XXX or MAP's?) and some range around them that can be specified in differnt ways (XXX: Elaborate on different ways?). 
+
 
 
 ## Synthetic data
