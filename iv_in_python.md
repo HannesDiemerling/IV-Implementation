@@ -1,5 +1,5 @@
 ---
-title: "Implementation of independent validation in Python."
+title: "Implementation of Independent Validation in Python."
 shorttitle: "IV in Python"
 author:
   - name: "Thede von Oertzen"
