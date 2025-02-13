@@ -99,7 +99,7 @@ In the current study, the log likelihood is used to avoid numerical problems. Wi
 
 The MCMC is done separately for each class to obtain the posterior distribution for $a$ and $b$, where  $a$ represent the asymptotical accuracy in that class, i.e., the accuracy the classifier would reach for an infinite amount of training data. 
 
-## Output Formats
+## Output of the Analysis
 The user of the package can access the distribution of $a$  for each class directly as a list of samples, but they can also request specific information like the MAP accuracy in that class, the posterior mean, the standard deviation, the probability to exceed a certain threshold (that is, the cumulative distribution function), or the probability that the asymptotic accuracy exceeds the asymptotic accuracy of a second distribution (e.g., a different classifier that the user wishes to compare against). 
 In addition to the accuracy for each class, the package provides the accuracy and the BAC for the whole dataset, as well as any other weighting of the class accuracies. 
 These metrics are a weighted um of the individual class accuracies. in the balanced accuracy, all classes are weighted equally, which provides an accuracy index which is independent of the class sizes in the data set. 
