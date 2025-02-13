@@ -3,22 +3,22 @@ title: "Implementation of independent validation in Python."
 shorttitle: "IV in Python"
 author:
   - name: "Thede von Oertzen"
-    affiliation: "Thomas Bayes Institute, Berlin"
+    affiliations: [1]
   - name: "Hannes Diemerling"
-    affiliations:
-      - "Thomas Bayes Institute, Berlin"
-      - "Department of Psychology, Humboldt-Universität zu Berlin, Berlin, Germany"
+    affiliations: [1, 2]
   - name: "Timo von Oertzen"
-    email: "timovoe@gmx.de"
-    affiliation: "Thomas Bayes Institute, Berlin"
-
-abstract: "To statistically test whether two groups differ or whether two models perform differently, classifier accuracy can be estimated and compared using statistical methods. However, common accuracy estimates, such as Cross Validation (CV), have unknown distributions that depend on the classifier used, making them unsuitable for statistical inference. Alternative methods, such as permutation tests or train-test splits, are computationally expensive and limited to frequentist null hypothesis testing against guessing. Independent Validation (IV) has been proposed as a more flexible alternative, as its accuracy estimate follows a binomial distribution. This property allows for both  conventional hypothesis testing and Bayesian analysis of classifier performance. Despite Python being the most widely used tool for machine learning methods, an IV implementation in Python has been missing so far. This article introduces a new Python package that implements IV. In addition to the core IV algorithm, the package provides functionalities to (1) plot the accuracy as a function of training set size, (2) estimate the asymptotical classifier accuracy along with its posterior distribution, and (3) query the posterior distribution for statistics and confidence intervals. The package also enables comparison of accuracy posterior distributions across different classes or datasets or different classifiers on the same dataset. An introduction is provided to using the package, along with example applications demonstrating its practical use. This Python package allows empirical researchers to easily incorporate IV into their analysis, as for example examining group differences or comparing group differences between different datasets. "
+    affiliations: [1]
+affiliations:
+  - id: 1
+    institution: "Thomas Bayes Institute, Berlin"
+  - id: 2
+    institution: "Department of Psychology, Humboldt-Universität zu Berlin, Berlin, Germany"
+abstract: "To statistically test whether two groups differ or whether two models perform differently, classifier accuracy can be estimated and compared using statistical methods. However, common accuracy estimates, such as Cross Validation (CV), have unknown distributions that depend on the classifier used, making them unsuitable for statistical inference. Alternative methods, such as permutation tests or train-test splits, are computationally expensive and limited to frequentist null hypothesis testing against guessing. Independent Validation (IV) has been proposed as a more flexible alternative, as its accuracy estimate follows a binomial distribution. This property allows for both conventional hypothesis testing and Bayesian analysis of classifier performance. Despite Python being the most widely used tool for machine learning methods, an IV implementation in Python has been missing so far. This article introduces a new Python package that implements IV. In addition to the core IV algorithm, the package provides functionalities to (1) plot the accuracy as a function of training set size, (2) estimate the asymptotical classifier accuracy along with its posterior distribution, and (3) query the posterior distribution for statistics and confidence intervals. The package also enables comparison of accuracy posterior distributions across different classes or datasets or different classifiers on the same dataset. An introduction is provided to using the package, along with example applications demonstrating its practical use. This Python package allows empirical researchers to easily incorporate IV into their analysis, as for example examining group differences or comparing group differences between different datasets."
 bibliography: bibliography.bib
 keywords: [APA Paper, Machine Learning, Classification, Validation, Independent Validation, Cross Validation, Accuracy, Python, Implementation]
-
 format:
-  # Can be jou (journal), man (manuscript), stu (student), or doc (document)
-  apaquarto-pdf: man
+  apaquarto-pdf:
+    type: man
 ---
 
 # Introduction
