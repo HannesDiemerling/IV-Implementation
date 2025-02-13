@@ -119,7 +119,7 @@ Using a burn-in phase of 1500 samples, a thinning factor of 10, and the default 
 Annabelle can now extract various numerical values and distributions from this object, @fig-svmclassifier shows the corresponding plot.
 To investigate whether the model can predict the different wines, she calculates the posterior probability, assuming a flat prior, that the BAC exceeds $\frac{1}{3}$. She finds that, within the limits of machine precision, the probability that the BAC is less than or equal to $\frac{1}{3}$ is effectively zero.
 
-![Image](plots/Classifier_Comparison.png){#fig-svmclassifier}
+![](plots/Classifier_Comparison.png){#fig-svmclassifier}
 
 She extracts the MAP of the distribution from the IV object, obtaining MAP = 65.46% with a 95% CI of [58.1%, 72,1%].
 To further illustrate the results, Annabelle uses the plot parameter of the distribution function to visualize the BAC.
@@ -149,7 +149,7 @@ The LR has a MAP of 93.53% and thus a very similar. Annabelle therefore is curio
 Fortunately, a service function tests whether one random variable is greater than another, resulting in a probability of 77.59% for the hpyothesis that the RF outperforms the LR on a latent level.
 Annabelle is amazed by this and changes her model to the RF, now having a model that improves her ability to determine the wine type based on its chemical ingredients.
 
-![Image](plots/Classifier_Comparison.png){#fig-comparison}
+![](plots/Classifier_Comparison.png){#fig-comparison}
 
 ## Which Classifier has the Best Global Accuracy?
 
@@ -158,7 +158,7 @@ He is paid per correctly classified wine, so he is not interested in the BAC but
 Annabelle now wants to plot the accuracy distributions of her classifiers to find the best option for her friend. @fig-ACCcomparison shows the plot, and again the RF performs best with a MAP of 98.58% while the probability that it outperforms the LR is 98.38%.
 Therefore, she clearly recommends the RF to her friend.
 
-![Image](plots/ACC_Classifier_Comparison.png){#fig-ACCcomparison}
+![](plots/ACC_Classifier_Comparison.png){#fig-ACCcomparison}
 
 ## What is the Expected Accuracy for Finite Sample Sizes?
 
@@ -169,7 +169,7 @@ The IV object generates this posterior distribution for each possible test set s
 This results in @fig-development, which she sends to her friend.
 He looks at the plot and determines that the first 20 samples are the most impactful, so he will purchase only 20 samples to save money.
 
-![Image](plots/Plot_Development.png){#fig-development}
+![](plots/Plot_Development.png){#fig-development}
 
 # Discussion
 IV is a method for evaluating classifier accuracy based on known data likelihood. Existing implementations are limited to R and are not widely available as packages [e.g., on CRAN\; @braun_independent_2023]. This article introduces a Python package, integrated with the scikit-learn library, which is currently the most widely used programming language in machine learning. The package employs a Metropolis-Hastings MCMC algorithm to estimate the posterior probability of classifier accuracy within each class and aggregates these estimates into multiple relevant metrics and distributions. An empirical example using the Wine dataset [@aeberhard1994comparative] demonstrates the package’s functionality and output.  
