@@ -75,39 +75,38 @@ ___
 # Background and Implementation
 
 ## IV Process
-To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a batch of points and records the result and then adds this batch to the trainset. The classifier is then trained on the new trainset and this process is repeated until the full dataset is used. 
+To reiterate, Kim and von Oertzen [-@kim_classifiers_2018] showed that independence of the results is ensured if every tested point has not been used for training beforehand. To achieve this, IV starts with a small starting set as the initial training set, tests a batch of points, records the result, and then adds this batch to the training set. The classifier is subsequently retrained on the updated training set. This process continues iteratively until the entire dataset has been used.
 
-In theory, the initial size for the training set can be zero. The classifier then starts by guessing the class of the first sample before adding them to the training set. However, in practice the training set is typically initialized with a number of initial samples, since no information can be gained from the first classifications, but noise is nevertheless added. In addition, some classifiers require a certain minimum amount of samples to operate; for example, a $k$-Nearest-Neighbor classifier needs at least $k$ elements in the training set. In the current implementation, the default value for the initial size of the training set is two. For larger data sets, it is recommended to increase this size to ten or beyond. 
+In theory, the initial training set size can be zero, which causes the classifier to begin by guessing the class of the first batch of samples before adding it to the training set. However, in practice, the training set is typically initialized with a small number of samples. This is because the first classifications provide no information while still introducing noise. Additionally, some classifiers require a certain minimum number of samples to function; for instance, a $k$-Nearest-Neighbor classifier needs at least $k$ elements in the training set. 
 
-In IV, the classifier is trained on the initial training set and then predicts a single sample or a batch of samples. The number of correct classifications in this batch is stored for each class along with the training set size. The batch size is set to one by default. With larger data sets it is advised to increase that number, as information loss is minimal for using batches, while computational costs can be reduced significantly.
+In the current implementation, the default initial training set size is two. For larger data sets, increasing this size to ten or more is recommended. 
+
+After being trained on the current training set, the classifier predicts the next batch of samples. The number of correct classifications in this batch is recorded for each class, along with the corresponding training set size. By defaul, the batch size is set to one. However, for larger datasets increasing the batch size is recommended. Larger batch sizes have minimal effect on the information for large data sets while significantly reducing computational costs.
 
 ## Mathematical Model for the Likelihood
-The probability that a sample is classified correctly increases with as the training set size increases. Braun, Eckert and von Oertzen [-@braun_independent_2023] showed that the accuracy within each class can be approximated by:
-
+In the next step, the recorded training set sizes and corresponding correctness data are used to estimate the parameters of the function that maps training set size to correctness probability. Braun, Eckert and von Oertzen [-@braun_independent_2023] showed that the accuracy within each class can be approximated by:
 $$
 P(\text{outcome} = 1) = a - \frac{b}{n}
 $$ {#eq-likelihood}
+where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that determines the deviation from this asymptote for finite training sample size \( n \).
 
-Where $a$ is the asymptotic accuracy, that is, the theoretical accuracy as \( n \to \infty \), and $b$ is an offset factor that  controls the reduction from the asymptote for finite training sample size \( n \).
-Both parameters depend on the classifier and can be estimated by a Bayesian parameter estimation. 
-A uniform prior between 0 and 1 is used for $a$, and a flat prior on the positive numbers for $b$. 
-The likelihood for a correct classification at any value of $(a,b)$ is then given by Equation (@eq-likelihood), and one minus that for a failed classification. 
-The likelihood of the complete set of classification results (containing the training sample size $n$ and whether the classification was correct) is the product of the likelihoods for each classification result.   
+The likelihood for a correct classification at any value of $(a,b)$ is given by Equation (@eq-likelihood), while the likelihood of a misclassification is one minus this value. The overall likelihood of the complete set of classification results is the product of the likelihoods for each classification result. To prevent numerical issues, the current implementation uses the log likelihood. 
 
 ## Monte Carlo Markov Chains
-In the current study, the log likelihood is used to avoid numerical problems. With that, a Monte Carlo Markov Chain (MCMC; [@metropolis1953equation]) is applied to sample from the posterior distribution of $a$ and $b$. The MCMC used in this implementation is a Metropolis Hastings algorithm, since it is computationally more efficient and more robust [@hastings1970monte]. The MCMC can be started with different burn-in size (default 100), thinning (default XXX), target number of samples (default XXX), and step size for the next candidate choice (default $XXX$ in both directions). Larger burn-in sizes, number of samples and thinning will improve the sample quality, but at the cost of higher running time. However, since the MCMC operates on the classification results that will not be recomputed, the computational costs are limited even with high number of total samples. 
+A Monte Carlo Markov Chain (MCMC; [@metropolis1953equation]) is then used to sample from the posterior distribution of $a$ and $b$. A uniform prior between 0 and 1 is used for $a$, and a flat prior on the positive numbers for $b$. The MCMC implemented here is a Metropolis Hastings algorithm, chosen for its computationally  efficiency and robustness [@hastings1970monte]. 
 
-The MCMC is done separately for each class to obtain the posterior distribution for $a$ and $b$, where  $a$ represent the asymptotical accuracy in that class, i.e., the accuracy the classifier would reach for an infinite amount of training data. 
+The MCMC can be initialized with various parameters, including burn-in size (default 100), thinning (default XXX), target number of samples (default XXX), and step size for the next proposed candidate (default $XXX$ in both directions). Larger burn-in sizes, more samples, and greater thinning will improve sample quality, but at the cost of increased runtime. However, since the MCMC operates on precomupted the classification results, computational costs remain manageable even with large number of samples. 
+
+The MCMC is performed separately for each class to obtain the posterior distribution for $a$ and $b$, where  $a$ represent the asymptotical accuracy in that class, i.e., the accuracy the classifier would reach for an infinite amount of training data. 
 
 ## Output of the Analysis
-The user of the package can access the distribution of $a$  for each class directly as a list of samples, but they can also request specific information like the MAP accuracy in that class, the posterior mean, the standard deviation, the probability to exceed a certain threshold (that is, the cumulative distribution function), or the probability that the asymptotic accuracy exceeds the asymptotic accuracy of a second distribution (e.g., a different classifier that the user wishes to compare against). 
-In addition to the accuracy for each class, the package provides the accuracy and the BAC for the whole dataset, as well as any other weighting of the class accuracies. 
-These metrics are a weighted um of the individual class accuracies. in the balanced accuracy, all classes are weighted equally, which provides an accuracy index which is independent of the class sizes in the data set. 
-The combination of class accuracies are computed by first multiplying the random variable for each class with its weight, and then convolving the distributions into a distribution for the weighted sum.
+The user of the package can access the distribution of $a$ for each class directly as a list of samples. Additionally, they can request specific metrics, such as the MAP accuracy for that class, the posterior mean, the standard deviation, the probability of exceeding a certain threshold (i.e., the cumulative distribution function), or the probability that the asymptotic accuracy exceeds the asymptotic accuracy of a second distribution (e.g., a different classifier that the user wishes to compare against).
 
-The package also combines the posteriors of $a$ and $b$ to provide a distribution of the expected accuracy for any finite sample size. 
-As for the asymptotic accuracy, the class accuracies for all classes can be accessed as well as the total accuracy, balanced accuracy, or any other weighting of class accuracies. 
-Using the same methods as above, again the MAP, mean, standard deviation, or any cumulative probability of the probability distributions are provided by the package. 
+In addition to the within-class accuracy , the package provides the accuracy and BAC for the entire dataset, as well as any other weighted combination of class accuracies. These metrics are computed as a weighted sum of the individual class accuracies. in the case of the BAC, all classes are weighted equally, yielding an accuracy index that is independent of the class sizes in the data set.
+
+The combined class accuracies are computed by first multiplying the random variable for each class by its corresponding weight, then convolving the distributions to obtain the distribution for the weighted sum.
+
+The package also combines the posteriors of $a$ and $b$ to provide a distribution of the expected accuracy for any finite sample size. Similar to the asymptotic accuracies, the expected accuracy for each class, for the entire dataset, or the expected BAC for the entire dataset can be accessed. Using the same methods as described above, the package provides metrics such as the MAP, mean, standard deviation, or any cumulative probability of the probability distributions. 
 
 # Illustrative Example
 
