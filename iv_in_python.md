@@ -157,8 +157,7 @@ Annabelle is amazed by this and changes her model to the RF, now having a model 
 
 A friend of Annabelle wants to create a tool that can predict the type of wine based on its chemical ingredients.
 He is paid per correctly classified wine, so he is not interested in the BAC but in the global accuracy, which is the percentage of wines correctly classified.
-Annabelle now wants to plot the accuracy distributions of her classifiers to find the best option for her friend.
-Figure @fig-ACCcomparison shows the plot, and again the RF performs best with a MAP of 98.58% while the probability that it outperforms the LR is 98.38%.
+Annabelle now wants to plot the accuracy distributions of her classifiers to find the best option for her friend. @fig-ACCcomparison shows the plot, and again the RF performs best with a MAP of 98.58% while the probability that it outperforms the LR is 98.38%.
 Therefore, she clearly recommends the RF to her friend.
 
 ![Image](plots/ACC_Classifier_Comparison.png){#fig-ACCcomparison}
