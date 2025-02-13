@@ -132,7 +132,7 @@ Based on these findings, she concludes that there are identifiable differences a
 She is now interested in determining whether two of her wine types, Barolo and Lugana, differ substantially in their chemical composition.
 To investigate this, she selects a subset of her dataset containing only these two wines.
 She then creates a new IV object and runs the compute posterior method using the same default parameters as before, still using the SVM to distinguish between Barolo and Lugana.
-She is interested in the performance in terms of sensitivity and specificity of detecting Barolo wine \footnote{Again, this could also be the sensitivity and specificity of screening tool in clinical psychology}.  
+She is interested in the performance in terms of sensitivity and specificity of detecting Barolo wine\footnote{Again, this could also be the sensitivity and specificity of screening tool in clinical psychology}.  
 She accesses those in the IV class by specifying the two wine labels in the accuracy method.
 The sensitivity, which reflects how well the model successfully identifies Barolo wines, is 76.92%. The specificity, i.e., the number of correct classifications of the other wine type, Lugana, is reported as 98.07%.
 The result suggest that although the classifier performs well overall, its ability to distinguish Barolo is lower than its ability to identify Lugana.
