@@ -15,7 +15,7 @@ bibliography: bibliography.bib
 keywords: [APA Paper, Machine Learning, Classification, Validation, Independent Validation, Cross Validation, Accuracy, Python, Implementation]
 format:
   apaquarto-pdf:
-    type: man
+    documentmode: man
 ---
 
 # Introduction
