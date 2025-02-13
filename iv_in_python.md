@@ -106,7 +106,7 @@ The package also combines the posteriors of $a$ and $b$ to provide a distributio
 
 Assume a researcher, let’s call her Annabelle, wants to find out if there is a difference between three types of wine called Barolo, Lugana, and Primitivo\footnote{The different types of wine could represent different treatment groups in a psychological experiment, different gender identities in a social science study, or different conditions in a neurological study.}.
 
-Her dataset consists of the chemical features for 59 different Barolo, 71 Lugana, and 48 Primitivo wines\footnote{The dataset for this example is available at archive.ics.uci.edu \[@aeberhard1994comparative\]. The Python code for the examples presented here can be found at https://github.com/HannesDiemerling/IV-Implementation/tree/main}.
+Her dataset consists of the chemical features for 59 different Barolo, 71 Lugana, and 48 Primitivo wines\footnote{The dataset for this example is available at archive.ics.uci.edu . The Python code for the examples presented here can be found at https://github.com/HannesDiemerling/IV-Implementation/tree/main}.
 Assuming all three types of wine are indistinguishable with respect to the chemical features under investigation, no classifier would be able to perform better than guessing, which corresponds to a BAC of $\frac{1}{3}$.
 Annabelle’s research hypothesis, in terms of the BAC, is whether the BAC is above $\frac{1}{3}$ for a classifier that asymptotically should be able to detect the difference.
 
