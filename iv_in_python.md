@@ -29,7 +29,7 @@ In instances where these assumptions are not well-founded, an alternative approa
 
 In this context, classifiers [@boucheron_theory_2005; @bay_detecting_2001] have been proposed as a universal non-parametric alternative for group comparisons [@kim_classifiers_2018].
 In the domain of machine learning, classifiers are a prevalent instrument for distinguishing between groups.
-A variety of classifiers exist, including for example Decision Trees [@breiman_classification_2017], Random Forests [@ho_random_1995], Support Vector Machines [@cortes_support-vector_1995], or K-nearest neighbor [@cover_nearest_1967].
+A variety of classifiers exist, including for example Decision Trees [@breiman_classification_2017], Random Forests [@ho_random_1995], Support Vector Machines [@cortes_support-vector_1995], or $k$-Nearest Neighbor [@cover_nearest_1967].
 Groups comparisons by classifier is done by training the classifier on the dataset to distinguish the groups. 
 If the groups are identical, the classifier will be unable to classify better than by guessing. 
 Therefore, if the classifier predicts better than guessing, it can be concluded that there is a group difference.
