@@ -1,0 +1,276 @@
+
+
+
+
+
+
+
+<!-- EVERYTHING STARTING HERE ARE FRAGMENTS -->
+
+## XXX
+
+### Is there a group difference
+Assume somebody, lets call her Annabelle, want to find out if there is a difference between two groups. Annabelle employs a Support Vector Machine (SVM) classifier along with the IV to estimate its accuracy. Her research question is: What is the probability that the classifier’s asymptotic accuracy—meaning the accuracy it would achieve with an infinite amount of data—is at least as high as that of random guessing? In a balanced dataset, random guessing corresponds to an accuracy of 50%. 
+
+As Annabelle is interested in finding if there is a group difference at all, she examines the classifier's asymptotic accuracy using IV, yielding the distribution of the overall accuracy. In a balanced dataset, this measure is equivalent to balanced accuracy. If the cumulative probability of achieving an accuracy below 50% is less than her chosen significance level, she can reject the null hypothesis that no group difference exists.
+
+### Comparing classifers
+Lets say Annabelle found that there is a strong difference between the groups. Now she wants to build a classifier for inference but she is unsure what kind of classifer she should use. 
+Her final choice will be trained on a dataset of 25 samples, this is the trainset size for which she wants to optimize the accuracy. Annabelle runs iv with multiple classifers like K-Nearest Neighbor, Random Forest and Linear Regression. As an output she generates the distribution for the global accuracy for a trainset size of 25. For the SVM she does not need to rerun the IV but can simply compute the distribution for global accuracy of 25. Now she has 4 different distributions for the accuracy and can see not only which has the highest MAP or mean but also how much the areas overlap giving her the information that most of these classifers are very similarly good. 
+
+### Development
+Annabelle considers getting more than 25 samples for her final classifier, but getting that data would be expensive. So before she does that, she looks at how much better the classifier would get if she had some more samples. She is also unsure on how many more samples she should get. So she looks wants to look at the development of how the balanced accuracy increases over increasing training set size. With IV she can get the balanced accuracy for every n from 1 to 100 and look at when it is good enough to satisfy her. In this implementation this proccess is directly accessable as a service. The result is a list of means (XXX or MAP's?) and some range around them that can be specified in differnt ways (XXX: Elaborate on different ways?). 
+
+
+
+## Synthetic data
+
+
+To estimate the quality of a KNN classifier run on some synthetic data. For the data the features are normally distributed with different means and standard deviations for the different groups. The data consists of three different groups that are not balanced. 
+
+TODO: Add Details about data and classifier. 
+
+![Estimated Accuracy Distribution of a Classifier Trained on 50 samples of the synthetic dataset.](demo/synthetic/acc50_1.png "Figure 1. Accuracy Distribution - 50 Samples")
+
+![Estimated Balanced Accuracy Distribution of a Classifier Trained on 50 samples of the synthetic dataset.](demo/synthetic/bacc50_1.png "Balanced Accuracy Distribution - 50 Samples")
+
+And now the improved variant. Though this needs to be rechecked whether this is realistic.
+
+![Estimated Accuracy Distribution of a Classifier Trained on 100 samples of the synthetic dataset.](demo/synthetic/acc100_1.png "Figure 1. Accuracy Distribution - 100 Samples")
+
+![Estimated Balanced Accuracy Distribution of a Classifier Trained on 100 samples of the synthetic dataset.](demo/synthetic/bacc50_1.png "Balanced Accuracy Distribution - 100 Samples")
+
+If you are really interested in the development these metrics over increasing sample size you can plot this as well.
+
+![Development of Balanced Accuracy Distribution of a Classifier on the synthetic dataset.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+## The Titanic
+
+The tragic sinking of the Titanic in 1912, which claimed the lives of over 1,500 passengers and crew, remains one of the most infamous maritime disasters in history; through the lens of modern data analysis, this historical event provides a unique opportunity to classify and predict survival outcomes based on passenger demographics and circumstances.
+
+Is it just random chance who survived and who didn't? Or is it dependent on some of the features recorded in this dataset?
+If the classifier is capable of predicting the outcomes of the passengers significantly better than chance there must be a difference between the group that the classifier detects.
+
+For this it is interesting if the classifier would be capable of finding a difference when trained on infinite amounts of data. Therefore we observe the asymptotical accuracy. 
+
+![Asymnptotical Accuracy Distribution of a Classifier on the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+Alternatively if we want to use it for inference to predict if somebody on board the titanic is going to drown and we want to know how accurate our own predictions are, we can observe the accuracy for a training set of the size of our actual training set.
+
+![Accuracy Distribution of a Classifier trained on ??? Samples from the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+Or lets assume we have different classification algorithms and want to find out which is best for our scenario. In that case it would be interesting to look at the development of the accuracy over sample size because some classifiers perform better for small sample sizes but scale less than other classifiers which then outperform the first ones as soon as a certain threshold is reached.
+
+TODO: Can this work in accordance with the assumed formular? Or does the formular imply that all classifiers scale similarly? I fear its the latter. 
+
+![Accuracy Development of a Classifier on the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+# Next chapter
+
+1. **Initialization:**  
+    A portion of the available data (the amount is user-definable) is used to train a classifier instance. This initial training set must be smaller than the complete dataset.
+
+2. **Prediction & Recording:**  
+    - The remaining dataset is split up in batches, smallest batch size must be one.  
+    - For each batch, the classifier makes predictions on the unseen samples.
+    - For every sample in the batch, the outcome (1 for a correct prediction or 0 for an incorrect one) is recorded along with the current training set size.
+
+3. **IV Iteration:**  
+    Step 2 is repeated until all samples are processed.
+
+4. **Posterior Distribution Computation:**
+    The probability to classify a new sample correctly for a given training set size \( n \) is modeled as:
+    
+    $$
+    p_n(outcome=1) = \text{asymptote} - \frac{\text{offset\_factor}}{n}
+    $$
+     
+    Here, the *asymptote* represents the classifier’s theoretical accuracy as \( n \to \infty \), and the *offset factor* controls the decline from the asymptote for finite \( n \).  
+    Using the Metropolis-Hastings algorithm (an MCMC sampler), we compute the posterior distribution for these model parameters. This posterior is computed separately for each class (label) in the dataset, enabling both class-specific accuracy assessments and aggregated metrics.
+
+5. **Outputs:**
+    The IV process produces several types of outputs:
+    - **Accuracy Distribution for an Infinite Training Set**  
+      For an infinitely large dataset, the classifier’s expected accuracy is represented by the posterior distribution of the *asymptote* parameter, which is provided for each label by IV.
+    - **Finite Training Set Accuracy Distribution:**  
+    For a finite training set of size 𝑛, IV can compute the corresponding accuracy distribution. For each MCMC sample, the accuracy at size 𝑛 is determined using:
+      $$
+      p_n = \text{asymptote} - \frac{\text{offset\_factor}}{n},
+      $$  
+      All MCMC values together form a distribution for the accuracy at this particular n.
+    - **Overall Accuracy Distributions:**  
+      Instead of assessing accuracy Distributions for a single label, IV also allows evaluation of the classifier’s performance over the full dataset. Two metrics are available:
+      - **Balanced Accuracy (bacc):**  
+        Using the IV, it is also possible to get a distribution for the balanced accuracy by convolving the distributions of accuracy per label with equal weights. 
+      - **Standard Accuracy (acc):**  
+        The accuracy is computed by convolving the per-label distributions with weights proportional to the frequency of each label in the dataset.
+    - **Development over Trainingset size:**
+      Another alternative is to observe the development of the accuracy while the trainingset increases and therefore the classifier improves. To do so, one of the prior functions is run multiple times with n values from 1 to 100. TODO: Elaborate
+
+___
+
+## Demo
+
+The implementation is demonstrated through a collection of example scripts (e.g., `demo.py` and `services.py`) which exercise different facets of the IV process:
+
+1. **Artificial Data Validation:**
+   - **Binary Data Demo:**  
+     A synthetic dataset is generated with 2D features where the binary target is defined by the condition \( X_0 + X_1 > 1 \). A k-Nearest Neighbors (kNN) classifier is used to run the IV process.  
+     *Output:*  
+     - Mean balanced accuracy is computed via repeated IV calls.
+     - The overall accuracy distribution is assessed.
+     - A comparison is made by computing the probability that the balanced accuracy exceeds the overall accuracy.
+     
+   - **Multi-class Data Demo:**  
+     An artificial dataset with three classes is processed. The IV class (`IV` in `iv8.py`) is used to log outcomes, compute the posterior using MCMC, and generate distributions for per-label and aggregated accuracies.
+
+   - **Graphical Outputs:**  
+     The demo routines create several plots using Matplotlib:
+     - **Histogram Plots:**  
+       For example, a histogram of MCMC samples (generated in `demo_mcmc()`) is overlaid with the analytic standard normal probability density function.
+     - **Development Curves:**  
+       Line plots showcase the evolution of accuracy (mean and interquartile ranges) as a function of training set size. These plots help visualize how performance converges to its asymptotic value.
+     - **Distribution Plots:**  
+       Density curves for balanced accuracy (e.g., saved as `demo/synthetic/bacc50_1`) and overall accuracy are generated.
+     
+2. **Real Data Validation (Titanic Demo):**  
+   The IV process is also demonstrated on a real-world dataset (the Titanic dataset). After necessary pre-processing and encoding, a Logistic Regression classifier is evaluated:
+   - The IV process records predictions over increasing training set sizes.
+   - Posterior distributions for the classifier’s asymptotic and finite-sample performance are computed.
+   - Plots are generated for balanced and overall accuracy distributions as well as for development trends.
+
+*Figure placeholders in the demo include:*
+- **Figure 1:** Histogram of MCMC samples vs. the analytical standard normal.
+- **Figure 2:** Density plots for balanced accuracy with varying training sizes.
+- **Figure 3:** Development curves showing mean accuracy and quartile bounds over increasing training set sizes.
+
+___
+
+## Testing Procedures
+
+Robustness and correctness of the IV implementation are ensured via a comprehensive battery of unit tests that cover:
+
+1. **MCMC Sampling (`mcmc.py`):**  
+   - **1D and Multi-dimensional Sampling:** Tests confirm that the Metropolis-Hastings algorithm produces samples with approximately the correct mean and variance (e.g., resembling a standard normal distribution).
+   - **Acceptance Rate:** The proportion of accepted proposals is verified to be within sensible bounds.
+
+2. **Weighted Sum Distribution (`weighted_sum_distribution.py`):**  
+   - **Normalization:** Tests ensure that the combination of individual probability distributions yields a final density that integrates to one.
+   - **Weighting Options:** Both default (uniform) and user-specified weights are tested for consistency.
+
+3. **IV Core Functionalities (`iv8.py` and `services.py`):**  
+   - **IV Record Logging:** The `run_iv` method correctly logs training set sizes and prediction outcomes.
+   - **Posterior Computation:** The `compute_posterior` method populates the posterior dictionary with valid MCMC samples for each label.
+   - **Distribution Retrieval and Caching:** Methods such as `get_label_accuracy`, `get_bacc_dist`, and `get_acc_dist` are tested to return valid frozen distribution objects (e.g., instances of `rv_histogram`), with caching ensuring repeated calls yield consistent results.
+   - **Service Interface:** The high-level `independent_validation` function is tested for correct behavior under different parameter settings (e.g., when returning only the mean or the full distribution).
+
+These tests are implemented using Python's `unittest` framework and verify the statistical properties and consistency of the simulation outcomes.
+
+___
+
+## Example
+
+To illustrate the practical application of IV, consider a fictional scenario in biomedical diagnostics.
+
+### Fictional Scenario: Diagnostic Accuracy of a Biomarker
+
+**Objective:**  
+Assess the performance of a classifier that predicts the presence of a disease based on a single biomarker.
+
+**Fictional Dataset:**
+
+- **Features (Biomarker Level):**  
+  \[
+  X = \{0.5,\; 1.2,\; 1.8,\; 2.1,\; 2.5,\; 3.0,\; 3.3,\; 3.8,\; 4.2,\; 4.8\}
+  \]
+- **Labels (Disease Status):**  
+  \[
+  y = \{0,\; 0,\; 0,\; 1,\; 0,\; 1,\; 1,\; 1,\; 1,\; 1\}
+  \]
+  Here, a label of 1 indicates disease presence and 0 indicates absence.
+
+### IV Application
+
+1. **Initialization:**  
+   A simple k-Nearest Neighbors classifier is initialized. The first three samples, for instance, \((0.5, 1.2, 1.8)\) (all with label 0), are used to train the classifier initially.
+
+2. **Incremental Prediction & Training:**
+   - **Batch Processing:**  
+     The next sample, \(2.1\) (with true label 1), is evaluated. Assume the classifier incorrectly predicts 0.  
+     The outcome \( (0 \text{, with training set size } 3) \) is recorded.
+   - The sample \(2.1\) is then added to the training set and the classifier is retrained.
+   - This process continues for the remaining samples, with each prediction’s correctness recorded along with the training size.
+
+3. **Posterior Computation:**  
+   After the entire dataset is processed, the IV records (comprising prediction outcomes and the respective training set sizes) are used to compute the posterior distribution of the model parameters via MCMC.  
+   - For example, the posterior for label 1 (disease present) might indicate an asymptotic accuracy mean of 0.87 with a credible interval of [0.82, 0.91].
+
+4. **Aggregated Metrics:**  
+   - **Balanced Accuracy (bacc):**  
+     By convolving the separate per-label accuracy distributions (with equal weight for each class), a balanced accuracy distribution is obtained. Suppose this yields a mean balanced accuracy of 0.84 at a training set size of 50.
+   - **Overall Accuracy (acc):**  
+     The overall accuracy is determined via a weighted average of the per-label accuracies. This metric can be used to compare the diagnostic performance against a baseline (e.g., chance-level performance).
+
+### Interpretation
+
+- The **posterior distributions** derived from the IV process offer a transparent picture of uncertainty in classifier performance, facilitating rigorous statistical tests (e.g., testing against a null hypothesis of no predictive power).
+- **Development curves** (accuracy as a function of training set size) help determine how quickly the classifier's performance converges and whether additional data could significantly improve accuracy.
+- The derived plots (similar to those generated in our demos) serve as both a validation tool and a means for comparative analysis in applied research.
+
+___
+
+By combining a rigorous, incremental validation process with robust posterior inference, the described methods enable the practical application of Independent Validation in varied research settings—from artificial simulations to real data scenarios such as biomedical diagnostics.
+
+# Results
+
+## Synthetic data
+
+To estimate the quality of a KNN classifier run on some synthetic data. For the data the features are normally distributed with different means and standard deviations for the different groups. The data consists of three different groups that are not balanced. 
+
+TODO: Add Details about data and classifier. 
+
+![Estimated Accuracy Distribution of a Classifier Trained on 50 samples of the synthetic dataset.](demo/synthetic/acc50_1.png "Figure 1. Accuracy Distribution - 50 Samples")
+
+![Estimated Balanced Accuracy Distribution of a Classifier Trained on 50 samples of the synthetic dataset.](demo/synthetic/bacc50_1.png "Balanced Accuracy Distribution - 50 Samples")
+
+And now the improved variant. Though this needs to be rechecked whether this is realistic.
+
+![Estimated Accuracy Distribution of a Classifier Trained on 100 samples of the synthetic dataset.](demo/synthetic/acc100_1.png "Figure 1. Accuracy Distribution - 100 Samples")
+
+![Estimated Balanced Accuracy Distribution of a Classifier Trained on 100 samples of the synthetic dataset.](demo/synthetic/bacc50_1.png "Balanced Accuracy Distribution - 100 Samples")
+
+If you are really interested in the development these metrics over increasing sample size you can plot this as well.
+
+![Development of Balanced Accuracy Distribution of a Classifier on the synthetic dataset.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+## The Titanic
+
+The tragic sinking of the Titanic in 1912, which claimed the lives of over 1,500 passengers and crew, remains one of the most infamous maritime disasters in history; through the lens of modern data analysis, this historical event provides a unique opportunity to classify and predict survival outcomes based on passenger demographics and circumstances.
+
+Is it just random chance who survived and who didn't? Or is it dependent on some of the features recorded in this dataset?
+If the classifier is capable of predicting the outcomes of the passengers significantly better than chance there must be a difference between the group that the classifier detects.
+
+For this it is interesting if the classifier would be capable of finding a difference when trained on infinite amounts of data. Therefore we observe the asymptotical accuracy. 
+
+![Asymnptotical Accuracy Distribution of a Classifier on the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+Alternatively if we want to use it for inference to predict if somebody on board the titanic is going to drown and we want to know how accurate our own predictions are, we can observe the accuracy for a training set of the size of our actual training set.
+
+![Accuracy Distribution of a Classifier trained on ??? Samples from the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+Or lets assume we have different classification algorithms and want to find out which is best for our scenario. In that case it would be interesting to look at the development of the accuracy over sample size because some classifiers perform better for small sample sizes but scale less than other classifiers which then outperform the first ones as soon as a certain threshold is reached.
+
+TODO: Can this work in accordance with the assumed formular? Or does the formular imply that all classifiers scale similarly? I fear its the latter. 
+
+![Accuracy Development of a Classifier on the Titanic Dataset. TODO: Does not exist yet and needs to be generated.](demo/synthetic/baccDevelopment_1.png "Development off Balanced Accurracy")
+
+## Random Guesses
+
+If all groups have the same distribution for the features, the results of IV look like this:
+
+# Discussion
+
+## The last paragraph
+Independent validation is the method of choice to optimize for statistically accurate results. 
+With this Python implementation it can now easily be used in combination with classifiers from the sklearn library. 
+
