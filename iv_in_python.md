@@ -74,7 +74,7 @@ ___
 
 # Background and Implementation
 
-To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a point (XXX Batch) and records the result and then adds this point to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
+To reiterate, Kim and von Oertzen showed that independence of the results is guaranteed if every tested point hasn't been used for training before. To achieve this IV starts by using a small starting set for training, tests a batch of points and records the result and then adds this batch to the trainset. The classifier is retrained on the new trainset and this process is repeated until the full dataset is used. 
 
 In IV, the classifier is trained on the initial training set and then predicts a single sample or a batch of samples. The number of correct classifications in this batch is stored for each class along with the training set size. The batch size is set to one by default. Again, with larger data sets it is advised to increase that number since information gain is then minimal, and otherwise the procedure is too time consuming. 
 
