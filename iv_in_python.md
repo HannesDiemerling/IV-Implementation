@@ -20,11 +20,20 @@ author-note:
     conflict of interest: The author has no conflict of interest to declare.
 bibliography: bibliography.bib     
 format:
-  apaquarto-docx: default
-  apaquarto-html: default
-  apaquarto-pdf: 
-    documentmode: man
-  apaquarto-typst: default
+  apaquarto-docx: 
+    toc: false
+  apaquarto-html: 
+    toc: true
+  apaquarto-typst: 
+    keep-typ: true
+    list-of-figures: false
+    list-of-tables: false
+    toc: false
+    papersize: "us-letter"
+  apaquarto-pdf:
+    # Can be jou (journal), man (manuscript), stu (student), or doc (document)
+    documentmode: jou
+    keep-tex: true
 ---
 
 # Introduction
