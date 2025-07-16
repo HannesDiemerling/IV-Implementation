@@ -18,7 +18,7 @@ keywords: [keyword1, keyword2]
 author-note:
   disclosures:
     conflict of interest: The author has no conflict of interest to declare.
-bibliography: mybibfile.bib     
+bibliography: bibliography.bib     
 format:
   apaquarto-docx: default
   apaquarto-html: default
