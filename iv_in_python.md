@@ -22,7 +22,8 @@ bibliography: bibliography.bib
 format:
   apaquarto-docx: default
   apaquarto-html: default
-  apaquarto-pdf: default
+  apaquarto-pdf: 
+    docuementmode: man
   apaquarto-typst: default
 ---
 
