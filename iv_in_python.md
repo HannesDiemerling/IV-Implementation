@@ -23,7 +23,7 @@ format:
   apaquarto-docx: default
   apaquarto-html: default
   apaquarto-pdf: 
-    docuementmode: man
+    documentmode: man
   apaquarto-typst: default
 ---
 
