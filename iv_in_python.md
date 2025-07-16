@@ -16,6 +16,19 @@ keywords: [APA Paper, Machine Learning, Classification, Validation, Independent 
 format:
   apaquarto-pdf:
     documentmode: man
+    include-in-header:
+      text: |
+        # \usepackage{rotating}
+        # \usepackage{float}
+        # \usepackage{typearea}
+        \usepackage{lineno}
+    include-before-body:
+      text: |
+        \linenumbers
+mask: true
+#masked-citations:
+#  - mypublication2020
+#  - mypublication2024
 ---
 
 # Introduction

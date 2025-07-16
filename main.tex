@@ -1,4 +1,4 @@
-\documentclass[article]{jss}
+\documentclass[man]{apa7}
 
 %% recommended packages
 \usepackage{orcidlink,thumbpdf,lmodern}
@@ -10,25 +10,25 @@
    \And Hannes Diemerling\\Department of Psychology,\\Humboldt–Universität zu Berlin, Germany\\Thomas Bayes Institute, Berlin
    \And Timo von Oertzen\\Thomas Bayes Institute, Berlin
 }
-\Plainauthor{Thede von Oertzen, Hannes Diemerling, Timo von Oertzen}
+%%\Plainauthor{Thede von Oertzen, Hannes Diemerling, Timo von Oertzen}
 
-\title{Implementation of Independent Validation in \proglang{Python}.}
-\Plaintitle{Implementation of Independent Validation in Python.}
-\Shorttitle{IV in \proglang{Python}}
+\title{Implementation of Independent Validation in Python.}
+%%\Plaintitle{Implementation of Independent Validation in Python.}
+\shorttitle{IV in Python}
 
-\Abstract{
-To statistically test whether two groups differ or whether two models perform differently, classifier accuracy can be estimated and compared using statistical methods. However, common accuracy estimates, such as Cross Validation (CV), have unknown distributions that depend on the classifier used, making them unsuitable for statistical inference. Alternative methods, such as permutation tests or train-test splits, are computationally expensive and limited to frequentist null hypothesis testing against guessing. Independent Validation (IV) has been proposed as a more flexible alternative, as its accuracy estimate follows a binomial distribution. This property allows for both conventional hypothesis testing and Bayesian analysis of classifier performance. Despite \proglang{Python} being the most widely used tool for machine learning methods, an IV implementation in \proglang{Python} has been missing so far. This article introduces a new \proglang{Python} package that implements IV. In addition to the core IV algorithm, the package provides functionalities to (1) plot the accuracy as a function of training set size, (2) estimate the asymptotical classifier accuracy along with its posterior distribution, and (3) query the posterior distribution for statistics and confidence intervals. The package also enables comparison of accuracy posterior distributions across different classes or datasets or different classifiers on the same dataset. An introduction is provided to using the package, along with example applications demonstrating its practical use. This \proglang{Python} package allows empirical researchers to easily incorporate IV into their analysis, as for example examining group differences or comparing group differences between different datasets.
+\abstract{
+To statistically test whether two groups differ or whether two models perform differently, classifier accuracy can be estimated and compared using statistical methods. However, common accuracy estimates, such as Cross Validation (CV), have unknown distributions that depend on the classifier used, making them unsuitable for statistical inference. Alternative methods, such as permutation tests or train-test splits, are computationally expensive and limited to frequentist null hypothesis testing against guessing. Independent Validation (IV) has been proposed as a more flexible alternative, as its accuracy estimate follows a binomial distribution. This property allows for both conventional hypothesis testing and Bayesian analysis of classifier performance. Despite Python being the most widely used tool for machine learning methods, an IV implementation in Python has been missing so far. This article introduces a new Python package that implements IV. In addition to the core IV algorithm, the package provides functionalities to (1) plot the accuracy as a function of training set size, (2) estimate the asymptotical classifier accuracy along with its posterior distribution, and (3) query the posterior distribution for statistics and confidence intervals. The package also enables comparison of accuracy posterior distributions across different classes or datasets or different classifiers on the same dataset. An introduction is provided to using the package, along with example applications demonstrating its practical use. This Python package allows empirical researchers to easily incorporate IV into their analysis, as for example examining group differences or comparing group differences between different datasets.
 }
 
-\Keywords{APA paper, machine learning, classification, validation, independent validation, cross validation, accuracy, \proglang{Python}, implementation}
-\Plainkeywords{APA paper, machine learning, classification, validation, independent validation, cross validation, accuracy, Python, implementation}
+\keywords{APA paper, machine learning, classification, validation, independent validation, cross validation, accuracy, Python, implementation}
+%%\Plainkeywords{APA paper, machine learning, classification, validation, independent validation, cross validation, accuracy, Python, implementation}
 
 %% - \Address{} of at least one author
 %% - May contain multiple affiliations for each author
 %%   (in extra lines, separated by \emph{and}\\).
 %% - May contain multiple authors for the same affiliation
 %%   (in the same first line, separated by comma).
-\Address{
+\address{
   Thede von Oertzen\\
   Thomas Bayes Institute, Berlin\\
   E-mail: \email{thede.vonoertzen@thomasbayes.de}
@@ -79,7 +79,7 @@ As all of these methods are not suitable for Bayesian estimates and computationa
 
 However, for small datasets IV shows a tendency to underestimate the accuracy, since testing in the first few steps has a small training set size. The issue was addressed by Braun, Eckert, and von Oertzen \citep{braun_independent_2023} by using an estimate of the asymptotic accuracy as the training set size approaches infinity. This utilizes the fact that IV provides correctness of items on differing training set sizes, which allows to estimate the function mapping training set size to the accuracy distribution.
 
-A preliminary version of this method was implemented in \proglang{R} \citep{braun_independent_2023, r_development_core_team._r_2010}. \proglang{R} is a useful tool for statistical computing, with a wide range of statistical libraries and packages. However, \proglang{R} is not explicitly build for machine learning applications, and consequently \proglang{R} isn't widely used in this community. Instead, \citet{kaggle-survey-2022} reports that the by far most common language for machine learning applications is \proglang{Python} \citep{van_rossum_python_1995}. To make IV commonly available for machine learning community, an implementation in \proglang{Python} is required. In addition, the \proglang{R} implementation of IV does not estimate the asymptotical accuracy in a Bayesian way, which is one of the most important advantages of IV.
+A preliminary version of this method was implemented in \proglang{R} \citep{braun_independent_2023, r_development_core_team._r_2010}. \proglang{R} is a useful tool for statistical computing, with a wide range of statistical libraries and packages. However, \proglang{R} is not explicitly build for machine learning applications, and consequently \proglang{R} isn't widely used in this community. Instead, \citet{kaggle-survey-2022} reports that the by far most common language for machine learning applications is Python \citep{van_rossum_python_1995}. To make IV commonly available for machine learning community, an implementation in Python is required. In addition, the \proglang{R} implementation of IV does not estimate the asymptotical accuracy in a Bayesian way, which is one of the most important advantages of IV.
 
 In this article, an implementation of IV in Phython is introduced\footnote{The package can be downloaded at \url{https://github.com/jonasthedevonoertzen/IV}}. It applies a Bayesian algorithm that can compute the accuracy of the classifier within each class (e.g., the specificity and sensitivity for detecting a depression), on the whole data set, and the Balanced Accuracy (\code{BAC}) for a weighted comparison of the class. For each of these accuracies, the posterior distribution can be obtained for the asymptotic accuracy or for every training set size. A small simulation is provided to explain the usage of the package and to demonstrate the results. The article closes by a discussion of the package for the research field.
 
@@ -127,7 +127,7 @@ The package also combines the posteriors of $a$ and $b$ to provide a distributio
 
 Assume a researcher, let’s call her Annabelle, wants to find out if there is a difference between three types of wine called Barolo, Lugana, and Primitivo\footnote{The different types of wine could represent different treatment groups in a psychological experiment, different gender identities in a social science study, or different conditions in a neurological study.}.
 
-Her dataset consists of the chemical features for 59 different Barolo, 71 Lugana, and 48 Primitivo wines\footnote{The dataset for this example is available at \texttt{archive.ics.uci.edu}. The \proglang{Python} code for the examples presented here can be found at \url{https://github.com/HannesDiemerling/IV-Implementation/tree/main}}.
+Her dataset consists of the chemical features for 59 different Barolo, 71 Lugana, and 48 Primitivo wines\footnote{The dataset for this example is available at \texttt{archive.ics.uci.edu}. The Python code for the examples presented here can be found at \url{https://github.com/HannesDiemerling/IV-Implementation/tree/main}}.
 Assuming all three types of wine are indistinguishable with respect to the chemical features under investigation, no classifier would be able to perform better than guessing, which corresponds to a \code{BAC} of $\frac{1}{3}$.
 Annabelle’s research hypothesis, in terms of the \code{BAC}, is whether the \code{BAC} is above $\frac{1}{3}$ for a classifier that asymptotically should be able to detect the difference.
 
@@ -209,7 +209,7 @@ He looks at the plot and determines that the first 20 samples are the most impac
 \end{figure}
 
 \section{Discussion} \label{sec:discussion}
-IV is a method for evaluating classifier accuracy based on known data likelihood. Existing implementations are limited to \proglang{R} and are not widely available as packages [e.g., on CRAN; \citep{braun_independent_2023}]. This article introduces a \proglang{Python} package, integrated with the \pkg{scikit-learn} library, which is currently the most widely used programming language in machine learning. The package employs a Metropolis-Hastings MCMC algorithm to estimate the posterior probability of classifier accuracy within each class and aggregates these estimates into multiple relevant metrics and distributions. An empirical example using the Wine dataset \citep{aeberhard1994comparative} demonstrates the package’s functionality and output.
+IV is a method for evaluating classifier accuracy based on known data likelihood. Existing implementations are limited to \proglang{R} and are not widely available as packages [e.g., on CRAN; \citep{braun_independent_2023}]. This article introduces a Python package, integrated with the \pkg{scikit-learn} library, which is currently the most widely used programming language in machine learning. The package employs a Metropolis-Hastings MCMC algorithm to estimate the posterior probability of classifier accuracy within each class and aggregates these estimates into multiple relevant metrics and distributions. An empirical example using the Wine dataset \citep{aeberhard1994comparative} demonstrates the package’s functionality and output.
 
 \subsection{Interpretations} \label{sec:interpretations}
 To the best of the authors’ knowledge, no other implementation exists that computes the Bayesian posterior of a classifier’s asymptotic within-class accuracy. Existing methods that approximate at least frequentist baseline distributions for a purely guessing classifier have significant drawbacks: some are computationally expensive (e.g., permutation tests), other reduce available data (e.g., training-testset-separation), and some do not work correctly to begin with (e.g., CV using a binomial null distribution). Moreover, none of these methods allow a comparisons beyond anything but chance performance or support a Bayesian approach.
@@ -229,7 +229,7 @@ Finally, an expert in machine learning may be interested in comparing a newly de
 \subsection{Limitations} \label{sec:limitations}
 A limitation of IV is that the assumed functional form mapping training set size to classifier performance within a group is a good approximation for training set sizes around ten samples but less accurate on very low sample sizes. Additionally, testing is not entirely independent when sample sizes are very low, as missclassified items added to the training set can bias subsequent classifications. Overly small starting sets may lead to Heywood cases in the Bayesian estimation.
 
-However, for moderate samples sizes, this issue largely disappears, as the initial training set size can be made sufficiently large. For small datasets, though, this approach results in some data loss, albeit less than in methods like train-test-splitting. To mitigate this effect for small N, the \proglang{Python} package introduced constraints the minimal expected success rate probability to the guessing probability. While this improves the approximation, it does not fully resolve the issue. Therefore, whenever possible, users are advised to use sufficiently large initial test sets.
+However, for moderate samples sizes, this issue largely disappears, as the initial training set size can be made sufficiently large. For small datasets, though, this approach results in some data loss, albeit less than in methods like train-test-splitting. To mitigate this effect for small N, the Python package introduced constraints the minimal expected success rate probability to the guessing probability. While this improves the approximation, it does not fully resolve the issue. Therefore, whenever possible, users are advised to use sufficiently large initial test sets.
 
 The batch size used to add items to the training set in IV involves a tradeoff. From an estimation perspective, a batch size of one is optimal. However, for large datasets with thousands of samples, this approach is computationally expensive. However, for such large datasets using larger batch sizes - in the order of magnitude of one tenth of the total dataset - results only in negligible loss of information, while significantly accelerating processing.
 
@@ -238,7 +238,7 @@ A promising future direction in this line of research is to mathematically inves
 
 Another open question is to what extent IV can be applied to evalua#te machine learning regression results or in the context of Large Language Models \citep{touvron_llama:_2023}. Similar to categorical classification, CV is commonly employed to assess regression performance, with various suggestions for loss functions \citep{picard_cross-validation_1984}. Accurately quantifying uncertainty in loss may require an independent validation technique analogous to the one proposed here for categorical classification.
 
-Independent validation is the preferred method for optimizing statistically accurate accuracy estimation. With the \proglang{Python} implementation introduced here, it can now be seamlessly integrated with classifiers in empirical research. This will help researchers in mostly all empirical research fields to improve their research and strengthen progress of science.
+Independent validation is the preferred method for optimizing statistically accurate accuracy estimation. With the Python implementation introduced here, it can now be seamlessly integrated with classifiers in empirical research. This will help researchers in mostly all empirical research fields to improve their research and strengthen progress of science.
 
 \bibliography{bibliography}
 
