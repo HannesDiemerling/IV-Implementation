@@ -72,6 +72,17 @@ python main.py
 
 The figures are written to `plots/`.
 
+## Citation
+
+See `CITATION.cff`, or cite the article above.
+
 ## License
 
-MIT
+Code: MIT (see `LICENSE`). The published article is licensed CC BY 4.0 by the
+journal. Third-party files keep their own licenses: `apa7.cls` (LaTeX Project
+Public License) and the apaquarto extension by W. Joel Schneider in
+`_extensions/`.
+
+## Authors
+
+Thede von Oertzen, Hannes Diemerling ([GitHub](https://github.com/HannesDiemerling), ORCID [0009-0002-6027-9181](https://orcid.org/0009-0002-6027-9181)) and Timo von Oertzen, the authors of the article.
