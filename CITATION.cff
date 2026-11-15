@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this material, please cite the article below."
+title: "Independent Validation in Python: paper and demo"
+authors:
+  - family-names: Oertzen
+    name-particle: von
+    given-names: Thede
+  - family-names: Diemerling
+    given-names: Hannes
+    orcid: "https://orcid.org/0009-0002-6027-9181"
+  - family-names: Oertzen
+    name-particle: von
+    given-names: Timo
+license: MIT
+repository-code: "https://github.com/HannesDiemerling/IV-Implementation"
+preferred-citation:
+  type: article
+  title: "How to use independent validation in Python"
+  authors:
+    - family-names: Oertzen
+      name-particle: von
+      given-names: Thede
+    - family-names: Diemerling
+      given-names: Hannes
+      orcid: "https://orcid.org/0009-0002-6027-9181"
+    - family-names: Oertzen
+      name-particle: von
+      given-names: Timo
+  journal: "Methodology"
+  volume: 22
+  issue: 2
+  year: 2026
+  doi: "10.5964/meth.18873"
