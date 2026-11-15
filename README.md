@@ -44,15 +44,23 @@ print("MAP:", bacc.map())
 print("95% interval:", bacc.ppf(0.025), bacc.ppf(0.975))
 ```
 
+The printed values change from run to run, because `IV` shuffles the data and
+the posterior is sampled by MCMC. Call `numpy.random.seed()` first for
+repeatable output.
+
 ## Contents
 
 | Path | Contents |
 |---|---|
 | `main.py` | Demo from the paper on the wine data set: group difference, comparison of four classifiers (balanced accuracy and accuracy), accuracy as a function of training set size |
 | `plots/` | Figures 1 to 4 of the paper, produced by `main.py` |
-| `demo/` | Additional example plots (synthetic data, Titanic) |
-| `iv_in_python.md`, `main.tex`, `bibliography.bib` | Manuscript source |
-| `iv_in_python.pdf` | Rendered manuscript |
+| `demo/` | Additional example plots (synthetic data, Titanic); the code that produced them is not in this repository |
+| `main.tex`, `apa7.cls`, `bibliography.bib` | Manuscript source in LaTeX (APA 7 class), pre-publication version |
+| `iv_in_python.md`, `_extensions/` | Quarto version of the manuscript with the apaquarto extension; its front matter currently holds template placeholders |
+| `fragments.txt` | Unused text fragments from drafting |
+| `iv_in_python.pdf` | Early rendering of the draft (February 2025, title "Implementation of independent validation in Python"); for the final text see the published article |
+| `.github/workflows/workflow.yml` | GitHub Actions job that renders `iv_in_python.md` to PDF with Quarto |
+| `CITATION.cff` | Citation metadata |
 
 ## Reproducing the figures
 
