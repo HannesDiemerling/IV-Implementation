@@ -20,7 +20,8 @@ Cross validation reuses the same samples for training and testing. The test
 outcomes are therefore dependent, which inflates the variance of the accuracy
 estimate and makes significance statements about classifiers unreliable.
 
-Independent Validation (IV) tests every sample before it is used for training.
+Independent Validation (IV) uses a sample for training only after it has been
+tested, starting from a small initial training set.
 The test outcomes are independent, so the accuracy of a classifier can be
 described by a full Bayesian posterior distribution. This allows statements
 such as "the probability that classifier A is more accurate than classifier B"
