@@ -11,6 +11,7 @@ authors:
   - family-names: Oertzen
     name-particle: von
     given-names: Timo
+    orcid: "https://orcid.org/0000-0002-3830-235X"
 license: MIT
 repository-code: "https://github.com/HannesDiemerling/IV-Implementation"
 preferred-citation:
@@ -26,8 +27,11 @@ preferred-citation:
     - family-names: Oertzen
       name-particle: von
       given-names: Timo
+      orcid: "https://orcid.org/0000-0002-3830-235X"
   journal: "Methodology"
   volume: 22
   issue: 2
+  start: 151
+  end: 171
   year: 2026
   doi: "10.5964/meth.18873"
